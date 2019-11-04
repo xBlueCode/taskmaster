@@ -1,0 +1,22 @@
+
+programs:
+  - cat1:
+      cmd: /bin/cat
+      nbproc: 2
+      delay: 0
+      restart: 0
+      rcodes:
+        - 0
+        - 1
+        - 2
+      stime: 20 # starting time (sec)
+      retries: 3
+      sigstop: TERM
+      waittokill: 30 #(sec)
+      stdin: 1 #or path to file or -1 for close
+      stderr: 2 #or path to file or -1 for close
+      pwd: .
+      umask: 021
+
+  - ls1:
+      cmd: /bin/ls

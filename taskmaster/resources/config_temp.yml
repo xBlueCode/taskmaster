@@ -1,0 +1,39 @@
+connection:
+  url: 127.0.0.1:9001
+  username: xbluecode
+  password: 123456789
+
+server:
+  logfile: /tmp/tm_01.log
+  loglevel: info
+  pidfile: /tmp/tm.pid
+  umask: 022
+  user: xblueadmin
+
+client:
+  prompt: 'tmaster $'
+
+programs:
+- cat1:
+    cmd: /bin/cat
+    numprocs: 2
+    umask: 022
+    wdir: .
+    autostart: true
+    delay: 0
+    autorestart: unexpected # always, never, unexpected
+    exitcodes:
+    - 0
+    - 1
+    - 2
+    starttime: 20 # starting time (sec)
+    stoptime: 10
+    startretries: 3
+    stopsig: TERM
+    stdout: 1 #or path to file or -1 for close
+    stderr: 2 #or path to file or -1 for close
+    env:
+    - ENV1: env1
+    - ENV2: env2
+- ls1:
+    cmd: /bin/ls
