@@ -1,30 +1,29 @@
 import yaml
 import logging
 
-def get_logger(name):
-	if type(name) != str or name == 'config':
-		logging.basicConfig(
-			level=logging.INFO,
-			format='%(asctime)s : %(levelname)-8s : %(name)-12s : %(message)s',
-		)
-		return logging.getLogger(name if type(name) == str else 'standard')
-	else:
-		logging.basicConfig(
-			level= logging.INFO,
-			format='%(asctime)s : %(levelname)-8s : %(name)-12s : %(message)s',
-			filename= '/tmp/tm.log',
-			filemode= 'w'
-		)
-		return logging.getLogger(name)
+from taskmaster.utils import log
 
-logger_std = get_logger('config')
+logger_std = log.get_logger('config')
 
 class Config:
 	def __init__(self, filepath):
 		self.filepath = filepath
 		self.data = load(filepath)
-		logger_std.info('Config file has beeen loaded successfully')
-		print(self.data)
+		if self.data is not None:
+			logger_std.info('Config file has beeen loaded successfully')
+			self.valid = True
+		else:
+			logger_std.error('Failed to load config file')
+			self.valid = False
+		#print(self.data)
+
+class ConfigServer(Config):
+	def __init__(self, filepath):
+		super().__init__(filepath)
+		if not self.valid:
+			logger_std.error('failed to create a valid Server Config')
+			return
+		self.x = 5
 
 
 def load(filepath):
@@ -33,9 +32,14 @@ def load(filepath):
 	:param filepath: the path to the yaml file
 	:return: configuration data from the yaml file
 	"""
-	with open(filepath, 'r') as cfile:
-		return yaml.load(cfile, Loader = yaml.FullLoader)
-
+	data = None
+	try:
+		with open(filepath, 'r') as cfile:
+			data = yaml.load(cfile, Loader = yaml.FullLoader)
+			cfile.close()
+	except Exception as e:
+		logger_std.error('Failed to open config file', exc_info=log.EXC_INFO)
+	return data
 
 def save(filepath, data):
 	"""
@@ -46,4 +50,3 @@ def save(filepath, data):
 	"""
 	with open(filepath, 'w') as cfile:
 		yaml.dump(data, cfile)
-
