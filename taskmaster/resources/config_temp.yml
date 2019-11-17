@@ -28,8 +28,9 @@ programs:
     - 2
     starttime: 20 # starting time (sec)
     stoptime: 10
-    startretries: 3
+    retries: 3
     stopsig: TERM
+    stdin: 0 #or path to file or -1 for close
     stdout: 1 #or path to file or -1 for close
     stderr: 2 #or path to file or -1 for close
     env:

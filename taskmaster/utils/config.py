@@ -1,5 +1,4 @@
 import yaml
-import logging
 
 from taskmaster.utils import log
 
