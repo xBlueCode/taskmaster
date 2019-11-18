@@ -1,4 +1,4 @@
-from taskmaster.utils import config as tm_config
+from taskmaster.common import config as tm_config
 from taskmaster.utils import log
 
 #data = tm_config.load("../resources/config_temp.yml")
