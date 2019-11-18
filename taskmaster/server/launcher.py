@@ -6,7 +6,11 @@ from taskmaster.utils import log
 
 logger_std = log.get_logger(None)
 
-config_server = tm_config.ConfigServer('../resources/config_temp.ym')
+config_server = tm_config.ConfigServer('../resources/config_temp.yml')
+
 if not config_server.valid:
 	logger_std.fatal('Exiting upon failed config upload')
 	exit(1)
+for program in config_server.programs:
+	print(program)
+print(config_server.server)

@@ -6,4 +6,4 @@ class Dashboard:
 		self.programs = []
 		for name_prog, data_prog in data.get('programs').items():
 			self.programs.append(Program(name_prog, data_prog))
-		
+
