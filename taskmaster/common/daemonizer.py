@@ -3,11 +3,11 @@
 import sys, os, time, atexit, signal, errno
 
 
+
+
 class Daemon:
 	"""\
 	Generic daemon class"""
-
-
 	def __init__(self, pidfile):
 		self.pidfile = pidfile
 
@@ -52,9 +52,10 @@ class Daemon:
 		# write pidfile
 		atexit.register(self.delpid)
 
-		pid = str(os.getpid())
+		pid = os.getpid()
 		with open(self.pidfile, 'w+') as file:
-			file.write(pid + '\n')
+			file.write(str(pid) + '\n')
+		self.pid = pid
 
 
 	def	delpid(self):

@@ -30,9 +30,7 @@ programs:
     stoptime: 10
     retries: 3
     stopsig: TERM
-    stdin: 0 #or path to file or -1 for close
-    stdout: 1 #or path to file or -1 for close
-    stderr: 2 #or path to file or -1 for close
+    stddir: /tmp/cat1
     env:
     - ENV1: env1
     - ENV2: env2
