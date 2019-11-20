@@ -38,6 +38,16 @@ class Daemon:
 			sys.stderr.write('second fork failed: {0}\n'.format(err))
 			sys.exit(1)
 
+		pid = os.getpid()
+		try:
+			with open(self.pidfile, 'w+') as file:
+				file.write(str(pid) + '\n')
+		except PermissionError as err:
+			sys.stderr.write('error: failed to open pidfile, errno = {0}\n'.format(err.errno))
+			sys.stderr.write('exiting with 1')
+			exit(1)
+		self.pid = pid
+
 		# direct standard file descriptors
 		sys.stdout.flush()
 		sys.stderr.flush()
@@ -52,10 +62,6 @@ class Daemon:
 		# write pidfile
 		atexit.register(self.delpid)
 
-		pid = os.getpid()
-		with open(self.pidfile, 'w+') as file:
-			file.write(str(pid) + '\n')
-		self.pid = pid
 
 
 	def	delpid(self):
@@ -79,7 +85,9 @@ class Daemon:
 			sys.stderr.write(msg.format(self.pidfile))
 			sys.exit(1)
 		# start the daemon
+		print('daemonizing !')
 		self.daemonize()
+		print('daemonized !')
 		self.run()
 
 
@@ -115,3 +123,4 @@ class Daemon:
 
 	def	run(self):
 		"To be implemented in the subclass"
+		pass
