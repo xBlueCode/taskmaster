@@ -85,9 +85,7 @@ class Daemon:
 			sys.stderr.write(msg.format(self.pidfile))
 			sys.exit(1)
 		# start the daemon
-		print('daemonizing !')
 		self.daemonize()
-		print('daemonized !')
 		self.run()
 
 

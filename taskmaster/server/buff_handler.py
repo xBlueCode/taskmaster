@@ -1,3 +1,7 @@
 
+from taskmaster.utils import log
+
+logger = log.get_logger('buff_handler')
+
 def buff_handler():
-	print('do something')
+	logger.info('starting buff_handler')

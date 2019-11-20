@@ -1,3 +1,5 @@
+import os
+
 from taskmaster.common import config as tm_config
 from taskmaster.utils import log
 
@@ -13,7 +15,14 @@ def main():
 	# get config file from args.
 	# get pidfile from args.
 	config_server = tm_config.ConfigServer("../resources/config_temp.yml")
-	server = ServerDaemon('./pidfile', config_server)
+	server = ServerDaemon('/tmp/pidfile', config_server)
+	logger_std.info('Server Daemon has been initialized')
+	logger_std.info('Starting server daemon')
+	try:
+		os.mkdir('/tmp/no_fake')
+	except OSError as err:
+		pass
+	server.start()
 
 if __name__ == '__main__':
 	main()
