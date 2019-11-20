@@ -14,6 +14,8 @@ from taskmaster.server.state_handler import state_handler
 from taskmaster.server.launch_handler import launch_handler
 from taskmaster.server.buff_handler import buff_handler
 
+from taskmaster.common import dashboard
+
 logger = log.get_logger('server')
 
 class ServerDaemon(Daemon):
@@ -22,6 +24,7 @@ class ServerDaemon(Daemon):
 		self.config = config
 		self.socket = socket.socket() # or in run
 		signal.signal(signal.SIGCHLD, sigchld_handler)
+		dashboard.init(config.data) # change position
 
 	def run(self):
 		logger.info('running the server daemon')
