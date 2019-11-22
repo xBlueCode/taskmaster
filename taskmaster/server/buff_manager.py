@@ -6,10 +6,10 @@ from taskmaster.utils import log
 
 from taskmaster.server.dashboard import dashboard
 
-logger = log.get_logger('buff_handler')
+logger = log.get_logger('buff_manager')
 
 def buff_manager():
-	logger.info('starting buff_handler')
+	logger.info('starting buff_manager')
 
 	while True:
 		time.sleep(1)

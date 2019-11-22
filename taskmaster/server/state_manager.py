@@ -6,11 +6,11 @@ from taskmaster.common.state import ProcessState
 
 from taskmaster.utils import log
 
-logger = log.get_logger('state_handler')
+logger = log.get_logger('state_manager')
 
 def state_manager():
 	# os.mkdir('/tmp/statedir')
-	logger.info('starting state_handler')
+	logger.info('starting state_manager')
 
 	while True:
 		for pid_exit in list(dashboard.pid_wexit):
