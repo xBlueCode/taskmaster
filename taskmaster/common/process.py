@@ -7,7 +7,7 @@ class Process:
 				 retries = 0, fds = None):
 		self.index = index
 		self.pid = -1
-		self.program = program
+		self.program_name = program
 		self.name = '{0}_{1}'.format(program, index)
 		self.state = state
 		self.status = status
