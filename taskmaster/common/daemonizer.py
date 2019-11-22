@@ -41,7 +41,9 @@ class Daemon:
 		pid = os.getpid()
 		try:
 			with open(self.pidfile, 'w+') as file:
+				# print('Creating pidfile')
 				file.write(str(pid) + '\n')
+				# time.sleep(1)
 		except PermissionError as err:
 			sys.stderr.write('error: failed to open pidfile, errno = {0}\n'.format(err.errno))
 			sys.stderr.write('exiting with 1')
@@ -74,12 +76,15 @@ class Daemon:
 	def start(self):
 		"""Start the daemon"""
 		# checking if the daemon is already running
+		pid = None
 		try:
-			with open(self.pidfile, 'r') as pfile:
-				pid = int(pfile.read().strip())
+			if os.path.exists(self.pidfile):
+				with open(self.pidfile, 'r') as pfile:
+					pid = int(pfile.read())
 		except IOError as err:
-			pid = None
-			# sys.stderr.write('Failed to read from pidfile, pid var got None value')
+			sys.stderr.write('Failed to read from pidfile, pid var got None value\n')
+		except ValueError as err:
+			sys.stderr.write('pidfile contains invalid value, pid var got None value\n')
 		if pid:
 			msg = "pidfile {0} already exist"
 			sys.stderr.write(msg.format(self.pidfile))
