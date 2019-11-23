@@ -2,7 +2,7 @@
 import os, time
 
 from taskmaster.server.dashboard import dashboard
-from taskmaster.common.state import ProcessState
+from taskmaster.common.configmap import ProcessState
 
 from taskmaster.utils import log
 

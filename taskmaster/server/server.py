@@ -28,11 +28,11 @@ class ServerDaemon(Daemon):
 	def run(self):
 		logger.info('running the server daemon')
 		logger.info('starting thread: state_handler')
-		thread_start(state_manager, ()) # not none
+		# thread_start(state_manager, ()) # not none
 
 		# thread	-> buff_handler
 		logger.info('starting thread: buff_handler')
-		thread_start(buff_manager, ()) # not none
+		# thread_start(buff_manager, ()) # not none
 
 		# thread	-> launch_handler
 		logger.info('starting thread: launch_handler')
@@ -41,5 +41,5 @@ class ServerDaemon(Daemon):
 		# loop		-> connect:
 		# 			thread	-> authenticate & serve
 		print('do nothing !')
-		time.sleep(15)
+		time.sleep(20)
 		logger.info('Server Daemon run ends !')

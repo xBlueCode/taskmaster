@@ -14,25 +14,25 @@ client:
   prompt: 'tmaster $'
 
 programs:
-- cat1:
-    cmd: /bin/cat
-    numprocs: 2
-    umask: 022
-    wdir: .
-    autostart: true
-    delay: 0
-    autorestart: unexpected # always, never, unexpected
-    exitcodes:
-    - 0
-    - 1
-    - 2
-    starttime: 20 # starting time (sec)
-    stoptime: 10
-    retries: 3
-    stopsig: TERM
-    stddir: /tmp/cat1
-    env:
-    - ENV1: env1
-    - ENV2: env2
-- ls1:
-    cmd: /bin/ls
+  - cat1:
+      cmd: /bin/cat
+      numprocs: 2
+      umask: '022'
+      wdir: .
+      autostart: Yes
+      autorestart: unexpected # always, never, unexpected
+      delay: 0
+      exitcodes:
+        - 0
+        - 1
+        - 2
+      starttime: 20 # starting time (sec)
+      stoptime: 10
+      retries: 3
+      stopsig: TERM
+      stddir: /tmp/cat1
+      env:
+        - ENV1: env1
+        - ENV2: env2
+#  - ls1:
+#      cmd: /bin/ls
