@@ -28,7 +28,7 @@ class ServerDaemon(Daemon):
 	def run(self):
 		logger.info('running the server daemon')
 		logger.info('starting thread: state_handler')
-		# thread_start(state_manager, ()) # not none
+		thread_start(state_manager, ()) # not none
 
 		# thread	-> buff_handler
 		logger.info('starting thread: buff_manager')

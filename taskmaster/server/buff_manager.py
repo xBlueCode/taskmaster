@@ -12,13 +12,15 @@ def buff_manager():
     logger.info('starting buff_manager')
 
     while 1:
+        logger.info('checking fds')
         fds = list(dashboard.fds_buff.keys())
         if not len(fds):
+            logger.info('empty fd list')
             time.sleep(1)
             continue
         rfds=[]
         try:
-            rfds, wfds, xfds = select(fds, [], [], 1)
+            rfds, wfds, xfds = select(fds, [], [])
         except OSError:
             logger.error('error occurred upon select fds')
             continue

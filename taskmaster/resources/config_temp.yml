@@ -16,7 +16,7 @@ client:
 programs:
   - printargs:
       cmd: /tmp/print_args hello world from unit
-      numprocs: 1
+      numprocs: 2
 #      umask: '00777'
       wdir: .
       autostart: Yes
@@ -26,7 +26,7 @@ programs:
         - 0
         - 1
         - 2
-      starttime: 20 # starting time (sec)
+      starttime: 0 # starting time (sec)
       stoptime: 10
       retries: 3
       stopsig: TERM

@@ -20,7 +20,7 @@ class Process:
         self.program_name = program.name
         self.name = '{0}_{1:03d}'.format(program.name, index)
         self.retries = program.retries
-        # self.fds = fds[:]
+        self.fds = []
 
     def exec(self, program):
         # in_read, in_write = os.pipe()
@@ -37,6 +37,8 @@ class Process:
             fds = {}
             fds[out_read] = program.stddir / '{0}_out'.format(self.name)
             fds[err_read] = program.stddir / '{0}_err'.format(self.name)
+            self.fds.append(out_read)
+            self.fds.append(err_read)
             os.close(out_write)
             os.close(err_write)
             if program.starttime > 0:
