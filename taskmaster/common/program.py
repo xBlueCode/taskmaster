@@ -1,6 +1,8 @@
 import signal
 
-from taskmaster.common.process import ProcessState, Process
+# from taskmaster.common.process import ProcessState, Process
+
+import pathlib
 
 from taskmaster.common.configmap import get_signal
 from taskmaster.common.configmap import get_autorestart
@@ -9,6 +11,7 @@ from taskmaster.common.configmap import get_autostart
 
 class Program:
     def __init__(self, name_prog, data_prog: dict):
+        from taskmaster.common.process import Process
         self.name = name_prog
         self.cmd = data_prog.get('cmd')
         self.numprocs = int_def(data_prog.get('numprocs'), 0)
@@ -27,12 +30,21 @@ class Program:
         self.stoptime = int_def(data_prog.get('stoptime'), 0)
         self.retries = int_def(data_prog.get('retries'), 0)
         self.stopsig = get_signal(data_prog.get('stopsig'), None)
-        self.stddir = data_prog.get('stddir')
+        self.stddir = self.path_def(data_prog.get('stddir'))
         self.env = data_prog.get('env')
         self.processes = []
         for ind in range(self.numprocs):
             self.processes.append(
-                Process(index=ind, program=self.name, retries=self.retries))
+                Process(index=ind, program=self, retries=self.retries))
+
+    def path_def(self, value, default='/tmp/tm/'):
+        if isinstance(value, str):
+            pathname=value
+        else:
+            pathname='{0}/{1}'.format(default, self.name)
+        path = pathlib.Path(pathname)
+        path.mkdir(parents=True, exist_ok=True)
+        return path
 
 
 def int_def(value, default=0):
@@ -44,3 +56,4 @@ def int_def(value, default=0):
         return int(value)
     else:
         return default
+

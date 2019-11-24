@@ -4,7 +4,8 @@ from taskmaster.common.program import Program
 class Dashboard:
     def __init__(self):
         self.programs = {}
-        self.processes = {}  # {pid: process}
+        self.pid_procs = {}  # {pid: process}
+        self.name_procs = {}  # {name: process}
         self.pid_wexit = []  # tuples returned by waitpid, (pid, exit code)
         self.pid_alive = []
         self.fds_buff = {}

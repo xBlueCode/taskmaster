@@ -15,7 +15,7 @@ client:
 
 programs:
   - cat1:
-      cmd: /bin/cat
+      cmd: /bin/cat /tmp/test_txt
       numprocs: 2
       umask: '022'
       wdir: .
