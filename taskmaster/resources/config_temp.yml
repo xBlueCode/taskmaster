@@ -14,10 +14,10 @@ client:
   prompt: 'tmaster $'
 
 programs:
-  - cat1:
-      cmd: /bin/cat /tmp/test_txt
-      numprocs: 2
-      umask: '022'
+  - printargs:
+      cmd: /tmp/print_args hello world from unit
+      numprocs: 1
+#      umask: '00777'
       wdir: .
       autostart: Yes
       autorestart: unexpected # always, never, unexpected

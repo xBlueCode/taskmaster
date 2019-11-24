@@ -31,11 +31,11 @@ class ServerDaemon(Daemon):
 		# thread_start(state_manager, ()) # not none
 
 		# thread	-> buff_handler
-		logger.info('starting thread: buff_handler')
-		# thread_start(buff_manager, ()) # not none
+		logger.info('starting thread: buff_manager')
+		thread_start(buff_manager, ()) # not none
 
 		# thread	-> launch_handler
-		logger.info('starting thread: launch_handler')
+		logger.info('starting thread: launch_manager')
 		thread_start(launch_manager, ()) # not none
 
 		# loop		-> connect:

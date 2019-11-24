@@ -15,7 +15,10 @@ class Program:
         self.name = name_prog
         self.cmd = data_prog.get('cmd')
         self.numprocs = int_def(data_prog.get('numprocs'), 0)
-        self.umask = int(data_prog.get('umask'), 8)
+        if isinstance(data_prog.get('umask'), str):
+            self.umask = int(data_prog.get('umask'), 8)
+        else:
+            self.umask = None
         self.wdir = self.wdir_def(data_prog.get('wdir'))
         self.stddir = self.stddir_def(data_prog.get('stddir'))
         self.delay = int_def(data_prog.get('delay'), 0)
