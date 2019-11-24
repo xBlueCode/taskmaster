@@ -51,9 +51,11 @@ class Process:
             os.dup2(out_write, sys.stdout.fileno())
             os.dup2(err_write, sys.stderr.fileno())
             # env, chdir, umask
+            program.config_process()
             try:
                 argv = program.cmd.split(' ')
                 os.execve(argv[0], argv[1:], os.environ) # recheck !
+                exit(1)
             except OSError as err:
                 # sys.stderr.write('Failed to execve process: {0}'.format(process.name))
                 exit(-1)

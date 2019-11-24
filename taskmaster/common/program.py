@@ -1,4 +1,4 @@
-import signal
+import os
 
 # from taskmaster.common.process import ProcessState, Process
 
@@ -16,7 +16,8 @@ class Program:
         self.cmd = data_prog.get('cmd')
         self.numprocs = int_def(data_prog.get('numprocs'), 0)
         self.umask = int(data_prog.get('umask'), 8)
-        self.wdir = data_prog.get('wdir')
+        self.wdir = self.wdir_def(data_prog.get('wdir'))
+        self.stddir = self.stddir_def(data_prog.get('stddir'))
         self.delay = int_def(data_prog.get('delay'), 0)
         self.autostart = get_autostart(data_prog.get('autostart'))
         self.autorestart = get_autorestart(data_prog.get('autorestart'))
@@ -30,21 +31,40 @@ class Program:
         self.stoptime = int_def(data_prog.get('stoptime'), 0)
         self.retries = int_def(data_prog.get('retries'), 0)
         self.stopsig = get_signal(data_prog.get('stopsig'), None)
-        self.stddir = self.path_def(data_prog.get('stddir'))
         self.env = data_prog.get('env')
+        if not isinstance(self.env, dict):
+            self.env = {}
         self.processes = []
         for ind in range(self.numprocs):
             self.processes.append(
                 Process(index=ind, program=self, retries=self.retries))
 
-    def path_def(self, value, default='/tmp/tm/'):
+    def stddir_def(self, value, default='/tmp/tm'):
         if isinstance(value, str):
-            pathname=value
+            pathname = value
         else:
-            pathname='{0}/{1}'.format(default, self.name)
+            pathname = os.path.join(default, self.name)
         path = pathlib.Path(pathname)
         path.mkdir(parents=True, exist_ok=True)
         return path
+
+    def wdir_def(self, value) ->pathlib.Path:
+        if isinstance(value, str):
+            return pathlib.Path(value)
+        else:
+            return pathlib.Path('.')
+
+    def config_process(self):
+        os.environ.update(self.env)
+        try:
+            if self.wdir:
+                if not self.wdir.exists():
+                    self.wdir.mkdir(parents=True, exist_ok=True)
+                os.chdir(str(self.wdir.resolve()))
+            if self.umask:
+                os.umask(self.umask)
+        except OSError as err:
+            pass
 
 
 def int_def(value, default=0):

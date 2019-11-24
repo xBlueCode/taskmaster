@@ -18,7 +18,9 @@ def load_programs(data: dict) -> {str: Program}:
     programs = {}
     for prog in data.get('programs'):
         for prog_name, prog_data in prog.items():
-            programs[prog_name] = Program(prog_name, prog_data)
+            program = Program(prog_name, prog_data)
+            if isinstance(program.cmd, str) and program.numprocs > 0: # recheck
+                programs[prog_name] = program
     return programs
 
 

@@ -32,7 +32,7 @@ programs:
       stopsig: TERM
       stddir: /tmp/cat1
       env:
-        - ENV1: env1
-        - ENV2: env2
+        ENV1: env1
+        ENV2: env2
 #  - ls1:
 #      cmd: /bin/ls
