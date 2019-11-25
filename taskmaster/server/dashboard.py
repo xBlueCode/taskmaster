@@ -9,6 +9,7 @@ class Dashboard:
         self.pid_wexit = []  # tuples returned by waitpid, (pid, exit code)
         self.pid_alive = []
         self.fds_buff = {}
+        self.fds_zombie = []
 
     def init(self, data: dict):
         self.programs = load_programs(data)

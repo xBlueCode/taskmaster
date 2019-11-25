@@ -1,7 +1,9 @@
-import os, time, sys
+import os, time, sys, pathlib
 
 from taskmaster.common.configmap import ProcessState
 from taskmaster.common.program import Program
+
+from taskmaster.utils.threading import thread_start
 
 
 class Process:
@@ -13,6 +15,7 @@ class Process:
         self.state = state
         self.status = status
         self.ctime = time.time()  # creation time
+        self.stime = None # start time
         self.dtime = None  # death time
         self.fds = []
         if not program or not isinstance(program, Program):
@@ -35,17 +38,15 @@ class Process:
         if pid > 0:
             self.pid = pid
             fds = {}
-            fds[out_read] = program.stddir / '{0}_out'.format(self.name)
-            fds[err_read] = program.stddir / '{0}_err'.format(self.name)
+            fds[out_read] = pathlib.Path(program.stddir / '{0}_out'.format(self.name))
+            fds[err_read] = pathlib.Path(program.stddir / '{0}_err'.format(self.name))
             self.fds.append(out_read)
             self.fds.append(err_read)
             os.close(out_write)
             os.close(err_write)
-            if program.starttime > 0:
-                self.state = ProcessState.STARTING
-            else: # check to BACKOFF
-                self.state = ProcessState.RUNNING
-            # dashboard.processes[pid] = process
+            self.stime = time.time()
+            self.dtime = None
+            thread_start(self.track_starting_state, (program, ))
             return (pid, fds)
         elif pid == 0:
             os.close(out_read)
@@ -59,8 +60,17 @@ class Process:
             program.config_process()
             try:
                 argv = program.cmd.split(' ')
-                os.execve(argv[0], argv, os.environ) # recheck !
+                os.execve(argv[0], argv, os.environ)  # recheck !
                 exit(1)
             except OSError as err:
                 # sys.stderr.write('Failed to execve process: {0}'.format(process.name))
                 exit(-1)
+
+    def track_starting_state(self, program):  # must be used in a thread
+        if program.starttime > 0:
+            self.state = ProcessState.STARTING
+            time.sleep(program.starttime)
+            if self.state == ProcessState.STARTING:
+                self.state = ProcessState.RUNNING
+        else:  # check to BACKOFF
+            self.state = ProcessState.RUNNING

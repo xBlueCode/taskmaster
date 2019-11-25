@@ -27,8 +27,16 @@ def buff_manager():
         logger.info('found some fds: {0}'.format(rfds))
         for fd in rfds:
             logger.info('fd={0} ready to write in {1}'.format(fd, dashboard.fds_buff.get(fd)))
-            data = os.read(fd, 1024)
+            data = None
+            try:
+                data = os.read(fd, 1024)
+            except OSError as err:
+                logger.error('Failed to read from fd={0}'.format(fd))
             if not data:
+                if fd in dashboard.fds_zombie:
+                    dashboard.fds_zombie.remove(fd)
+                    os.close(fd)
+                    dashboard.fds_buff.pop(fd)
                 continue
             file = dashboard.fds_buff.get(fd)
             if isinstance(file, pathlib.Path):

@@ -2,6 +2,7 @@ import os, time
 
 from taskmaster.server.dashboard import dashboard
 from taskmaster.common.configmap import ProcessState
+from taskmaster.common.process import Process
 
 from taskmaster.utils import log
 
@@ -23,9 +24,8 @@ def state_manager():
                 if process.state == ProcessState.RUNNING:
                     process.state = ProcessState.EXITED
                     logger.info('process {0} exited with code {1}'.format(pid_exit[0], pid_exit[1]))
-                    for fd in process.fds:
-                        os.close(fd)
-                        dashboard.fds_buff.pop(fd)
+                    clean_proccess(process)
+                    logger.info('process {0} has been cleaned'.format(pid_exit[0]))
                     if pid_exit[1] in program.exitcodes:
                         if program.autorestart == 'true':
                             pass  # launch again
@@ -44,3 +44,21 @@ def state_manager():
 
             dashboard.pid_wexit.remove(pid_exit)
         time.sleep(1)
+
+
+def clean_proccess(process:Process):
+    process.dtime = time.time()
+    dashboard.pid_procs.pop(process.pid)
+    process.pid = -1
+    logger.debug('cleaning process fds: {0}'.format(process.fds))
+    for fd in process.fds:
+        try:
+            # os.close(fd)
+            process.fds.remove(fd)
+            dashboard.fds_zombie.append(fd)
+            # dashboard.fds_buff.pop(fd)
+        except OSError as err:
+            logger.error('failed to close fd={0}'.format(fd))
+    logger.debug('fds_zombies: {0}'.format(dashboard.fds_zombie))
+    # process.fds.clear()
+    # add fds to old list
