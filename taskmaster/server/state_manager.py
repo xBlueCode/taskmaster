@@ -6,26 +6,26 @@ from taskmaster.common.process import Process
 
 from taskmaster.utils import log
 
-logger = log.get_logger('state_manager')
+log = log.get_logger('state_manager')
 
 
 def state_manager():
     # os.mkdir('/tmp/statedir')
-    logger.info('starting state_manager')
+    log.info('starting state_manager')
 
     while True:
-        logger.info('checking processes state')
+        log.info('checking processes state')
         for pid_exit in list(dashboard.pid_wexit):
-            logger.info('updating state of pid: {0}'.format(pid_exit[0]))
+            log.info('updating state of pid: {0}'.format(pid_exit[0]))
             process = dashboard.pid_procs.get(pid_exit[0])
             program = dashboard.programs.get(process.program_name)
 
             try:
                 if process.state == ProcessState.RUNNING:
                     process.state = ProcessState.EXITED
-                    logger.info('process {0} exited with code {1}'.format(pid_exit[0], pid_exit[1]))
+                    log.info('process {0} exited with code {1}'.format(pid_exit[0], pid_exit[1]))
                     clean_proccess(process)
-                    logger.info('process {0} has been cleaned'.format(pid_exit[0]))
+                    log.info('process {0} has been cleaned'.format(pid_exit[0]))
                     if pid_exit[1] in program.exitcodes:
                         if program.autorestart == 'true':
                             pass  # launch again
@@ -50,15 +50,15 @@ def clean_proccess(process:Process):
     process.dtime = time.time()
     dashboard.pid_procs.pop(process.pid)
     process.pid = -1
-    logger.debug('cleaning process fds: {0}'.format(process.fds))
-    for fd in process.fds:
+    log.debug('cleaning process fds: {0}'.format(process.fds))
+    fds = process.fds[:]
+    for fd in fds:
         try:
-            # os.close(fd)
+            log.debug('moving fd={0} to zombie list'.format(fd))
             process.fds.remove(fd)
             dashboard.fds_zombie.append(fd)
-            # dashboard.fds_buff.pop(fd)
         except OSError as err:
-            logger.error('failed to close fd={0}'.format(fd))
-    logger.debug('fds_zombies: {0}'.format(dashboard.fds_zombie))
+            log.error('failed to close fd={0}'.format(fd))
+    log.debug('fds_zombies: {0}'.format(dashboard.fds_zombie))
     # process.fds.clear()
     # add fds to old list

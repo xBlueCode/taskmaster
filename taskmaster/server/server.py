@@ -15,7 +15,7 @@ from taskmaster.server.buff_manager import buff_manager
 
 from taskmaster.server.dashboard import dashboard
 
-logger = log.get_logger('server')
+log = log.get_logger('server')
 
 class ServerDaemon(Daemon):
 	def __init__(self, pidfile, config: ConfigServer):
@@ -26,20 +26,20 @@ class ServerDaemon(Daemon):
 		signal.signal(signal.SIGCHLD, sigchld_handler)
 
 	def run(self):
-		logger.info('running the server daemon')
-		logger.info('starting thread: state_handler')
+		log.info('running the server daemon')
+		log.info('starting thread: state_handler')
 		thread_start(state_manager, ()) # not none
 
 		# thread	-> buff_handler
-		logger.info('starting thread: buff_manager')
+		log.info('starting thread: buff_manager')
 		thread_start(buff_manager, ()) # not none
 
 		# thread	-> launch_handler
-		logger.info('starting thread: launch_manager')
+		log.info('starting thread: launch_manager')
 		thread_start(launch_manager, ()) # not none
 
 		# loop		-> connect:
 		# 			thread	-> authenticate & serve
 		print('do nothing !')
 		time.sleep(20)
-		logger.info('Server Daemon run ends !')
+		log.info('Server Daemon run ends !')

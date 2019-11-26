@@ -5,33 +5,36 @@ from taskmaster.utils import log
 
 from taskmaster.server.dashboard import dashboard
 
-logger = log.get_logger('buff_manager')
+BUFF_SIZE = 1024
+TIME_SLEEP = 1
+
+log = log.get_logger('buff_manager')
 
 
 def buff_manager():
-    logger.info('starting buff_manager')
+    log.info('starting buff_manager')
 
     while 1:
-        logger.info('checking fds')
+        time.sleep(TIME_SLEEP)
+        log.debug('checking fds')
         fds = list(dashboard.fds_buff.keys())
         if not len(fds):
-            logger.info('empty fd list')
-            time.sleep(1)
+            log.debug('empty fd list')
             continue
         rfds=[]
         try:
             rfds, wfds, xfds = select(fds, [], [])
         except OSError:
-            logger.error('error occurred upon select fds')
+            log.error('error occurred upon select fds')
             continue
-        logger.info('found some fds: {0}'.format(rfds))
+        log.info('found some fds: {0}'.format(rfds))
         for fd in rfds:
-            logger.info('fd={0} ready to write in {1}'.format(fd, dashboard.fds_buff.get(fd)))
+            log.info('fd={0} ready to write in {1}'.format(fd, dashboard.fds_buff.get(fd)))
             data = None
             try:
-                data = os.read(fd, 1024)
+                data = os.read(fd, BUFF_SIZE)
             except OSError as err:
-                logger.error('Failed to read from fd={0}'.format(fd))
+                log.error('Failed to read from fd={0}'.format(fd))
             if not data:
                 if fd in dashboard.fds_zombie:
                     dashboard.fds_zombie.remove(fd)
@@ -43,7 +46,6 @@ def buff_manager():
                 if not file.exists():
                     file.touch(exist_ok=True)
                 file.write_text(data.decode('UTF-8'))
-        time.sleep(1)
 
 
         # with open(file, os.O_CREAT | os.O_WRONLY | os.O_APPEND) as file:
