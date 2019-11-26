@@ -7,6 +7,7 @@ from taskmaster.server.dashboard import dashboard
 
 BUFF_SIZE = 1024
 TIME_SLEEP = 1
+DECODE_FORMAT = 'UTF-8'
 
 log = log.get_logger('buff_manager')
 
@@ -45,7 +46,7 @@ def buff_manager():
             if isinstance(file, pathlib.Path):
                 if not file.exists():
                     file.touch(exist_ok=True)
-                file.write_text(data.decode('UTF-8'))
+                file.write_text(data.decode(DECODE_FORMAT))
 
 
         # with open(file, os.O_CREAT | os.O_WRONLY | os.O_APPEND) as file:

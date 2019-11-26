@@ -46,7 +46,7 @@ class Process:
             os.close(err_write)
             self.stime = time.time()
             self.dtime = None
-            thread_start(self.track_starting_state, (program, ))
+            thread_start(self.starting_state_tracker, (program,))
             return (pid, fds)
         elif pid == 0:
             os.close(out_read)
@@ -66,7 +66,17 @@ class Process:
                 # sys.stderr.write('Failed to execve process: {0}'.format(process.name))
                 exit(-1)
 
-    def track_starting_state(self, program):  # must be used in a thread
+    def starting_state_tracker(self, program: Program):  # must be used in a thread
+        """\
+        It decides about the state of the process upon starting depending on the staring time
+        if the starting time is 0, then it sets the state directly to RUNNING,
+        otherwise, it waits* until the end of the starting time then it sets
+        the process's state to RUNNING if it sill in the STARTING state.
+
+        * This is a blocking method so it must be executed in its own thread.
+        :param program:
+        :return:
+        """
         if program.starttime > 0:
             self.state = ProcessState.STARTING
             time.sleep(program.starttime)
@@ -74,3 +84,19 @@ class Process:
                 self.state = ProcessState.RUNNING
         else:  # check to BACKOFF
             self.state = ProcessState.RUNNING
+
+    def control_starting_state(self, program: Program):
+        """\
+        It decides about the state of the process when it is exited while
+        it's in the starting/backoff state
+        :param program:
+        :return:
+        """
+        if self.state != ProcessState.STARTING \
+                and self.state != ProcessState.BACKOFF:
+            return
+        time_diff = time.time() - self.stime
+        if time_diff >= program.starttime: # this is additional to ss_tracker in case of race condition
+            self.state = ProcessState.RUNNING
+        else:
+            self.state = ProcessState.BACKOFF

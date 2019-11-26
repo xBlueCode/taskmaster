@@ -21,6 +21,7 @@ def state_manager():
             program = dashboard.programs.get(process.program_name)
 
             try:
+                process.control_starting_state(program)
                 if process.state == ProcessState.RUNNING:
                     process.state = ProcessState.EXITED
                     log.info('process {0} exited with code {1}'.format(pid_exit[0], pid_exit[1]))

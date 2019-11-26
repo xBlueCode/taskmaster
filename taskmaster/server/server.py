@@ -40,6 +40,5 @@ class ServerDaemon(Daemon):
 
 		# loop		-> connect:
 		# 			thread	-> authenticate & serve
-		print('do nothing !')
 		time.sleep(20)
 		log.info('Server Daemon run ends !')
