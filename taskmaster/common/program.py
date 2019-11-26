@@ -10,6 +10,11 @@ from taskmaster.common.configmap import get_autostart
 
 
 class Program:
+    """\
+    Program object contains all information of one program
+    and parsed from the programs list in the configuration file.
+    In addition it creates a list of processes depending on the numprocs value.
+    """
     def __init__(self, name_prog, data_prog: dict):
         from taskmaster.common.process import Process
         self.name = name_prog

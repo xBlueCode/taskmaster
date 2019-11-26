@@ -7,6 +7,12 @@ from taskmaster.utils.threading import thread_start
 
 
 class Process:
+    """\
+    Process object contains all necessary information about:
+    the name of the parent program and the index of the process in the list.
+    pid, state, status, timestamps, and current retries number.
+    file descriptors linked to the std_out and std_err
+    """
     def __init__(self, index=0, program:Program=None, status=None, state=ProcessState.CREATED,
                  retries=0, fds=None):
         # from taskmaster.common.program import Program
@@ -25,6 +31,14 @@ class Process:
         self.fds = []
 
     def exec(self, program):
+        """
+        Here's the magic of fork/exec.
+        It creates two pipes and link them to the std_out/std_err of the process
+        After fork, the parent process will return the pid of the child process
+        and the list of the file descriptors linked to the standard out/err of child process.
+        :param program:
+        :return:
+        """
         # in_read, in_write = os.pipe()
         out_read, out_write = os.pipe()
         err_read, err_write = os.pipe()
@@ -36,7 +50,7 @@ class Process:
             return # exit
         if pid > 0:
             self.pid = pid
-            fds = {}
+            fds = {}  # {fd: file}
             fds[out_read] = pathlib.Path(program.stddir / '{0}_out'.format(self.name))
             fds[err_read] = pathlib.Path(program.stddir / '{0}_err'.format(self.name))
             self.fds.append(out_read)
@@ -46,7 +60,7 @@ class Process:
             self.stime = time.time()
             self.dtime = None
             thread_start(self.starting_state_tracker, (program,))
-            return (pid, fds)
+            return pid, fds
         elif pid == 0:
             os.close(out_read)
             os.close(err_read)
@@ -62,7 +76,6 @@ class Process:
                 os.execve(argv[0], argv, os.environ)  # recheck !
                 exit(1)
             except OSError as err:
-                # sys.stderr.write('Failed to execve process: {0}'.format(process.name))
                 exit(-1)
 
     def starting_state_tracker(self, program: Program):  # must be used in a thread
@@ -87,7 +100,7 @@ class Process:
     def control_starting_state(self, program: Program):
         """\
         It decides about the state of the process when it is exited while
-        it's in the starting/backoff state
+        it's in the starting/backoff state.
         :param program:
         :return:
         """
