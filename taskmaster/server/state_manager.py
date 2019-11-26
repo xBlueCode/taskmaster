@@ -1,8 +1,9 @@
 import os, time
 
-from taskmaster.server.dashboard import dashboard
 from taskmaster.common.configmap import ProcessState
 from taskmaster.common.process import Process
+from taskmaster.server.dashboard import dashboard
+from taskmaster.server.launch_manager import launch_process
 
 from taskmaster.utils import log
 
@@ -23,23 +24,19 @@ def state_manager():
             try:
                 process.control_starting_state(program)
                 if process.state == ProcessState.RUNNING:
-                    process.state = ProcessState.EXITED
                     log.info('process {0} exited with code {1}'.format(pid_exit[0], pid_exit[1]))
-                    clean_proccess(process)
+                    clean_proccess(process, ProcessState.EXITED)
                     log.info('process {0} has been cleaned'.format(pid_exit[0]))
                     if pid_exit[1] in program.exitcodes:
                         if program.autorestart == 'true':
-                            pass  # launch again
+                            launch_process(program, process)
                     elif program.autorestart == 'unexpected':
-                        pass  # launch again
+                        launch_process(program, process)
                 elif process.state == ProcessState.STOPPING:
-                    process.state = ProcessState.STOPPED
+                    clean_proccess(process, ProcessState.STOPPED)
                 elif process.state == ProcessState.BACKOFF:
-                    if process.retries < 1:
-                        process.state = ProcessState.FATAL
-                    else:
-                        process.retries = process.retries - 1
-                    # launch again, dec retries
+                    clean_proccess(process, ProcessState.FATAL)
+                    launch_process(program, process, retry=True)
             except OSError as err:
                 process.state = ProcessState.UNKNOWN
 
@@ -47,7 +44,9 @@ def state_manager():
         time.sleep(1)
 
 
-def clean_proccess(process:Process):
+def clean_proccess(process:Process, state=None):
+    if state:
+        process.state = state
     process.dtime = time.time()
     dashboard.pid_procs.pop(process.pid)
     process.pid = -1

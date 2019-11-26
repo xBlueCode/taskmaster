@@ -17,7 +17,6 @@ class Process:
         self.ctime = time.time()  # creation time
         self.stime = None # start time
         self.dtime = None  # death time
-        self.fds = []
         if not program or not isinstance(program, Program):
             return
         self.program_name = program.name

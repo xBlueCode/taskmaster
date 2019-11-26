@@ -28,8 +28,12 @@ def launch_manager():
                 launch_process(program, process)
 
 
-def launch_process(program: Program, process: Process):
+def launch_process(program: Program, process: Process, retry:bool = False):
     log.info('launching process: {0}'.format(process.name))
+    if retry:
+        process.retries = process.retries - 1
+        if process.retries < 1:
+            return
     pid, fds = process.exec(program)
     dashboard.pid_procs[pid] = process
     dashboard.fds_buff.update(fds)
