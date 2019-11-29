@@ -1,4 +1,3 @@
-
 import time
 import socket
 import signal
@@ -17,28 +16,36 @@ from taskmaster.server.dashboard import dashboard
 
 log = log.get_logger('server')
 
+
 class ServerDaemon(Daemon):
-	def __init__(self, pidfile, config: ConfigServer):
-		super().__init__(pidfile)
-		self.config = config
-		self.socket = socket.socket() # or in run
-		dashboard.init(config.data) # change position
-		signal.signal(signal.SIGCHLD, sigchld_handler)
+    def __init__(self, pidfile, config: ConfigServer):
+        super().__init__(pidfile)
+        self.config = config
+        self.addr = ('127.0.0.1', 4321)  # temp: to be parsed from config file
+        self.socket = socket.socket()  # or in run
+        dashboard.init(config.data)  # change position
+        signal.signal(signal.SIGCHLD, sigchld_handler)
 
-	def run(self):
-		log.info('running the server daemon')
-		log.info('starting thread: state_handler')
-		thread_start(state_manager, ()) # not none
+    def run(self):
+        log.info('running the server daemon')
+        log.info('starting thread: state_handler')
+        try:
+            self.socket.bind(self.addr)
+            self.socket.listen(5)
+            log.debug('server socket has been bound')
+        except:
+            log.error('exception occurred upon binding the server socket')
+        thread_start(state_manager, ())  # not none
 
-		# thread	-> buff_handler
-		log.info('starting thread: buff_manager')
-		thread_start(buff_manager, ()) # not none
+        # thread	-> buff_handler
+        log.info('starting thread: buff_manager')
+        thread_start(buff_manager, ())  # not none
 
-		# thread	-> launch_handler
-		log.info('starting thread: launch_manager')
-		thread_start(launch_manager, ()) # not none
+        # thread	-> launch_handler
+        log.info('starting thread: launch_manager')
+        thread_start(launch_manager, ())  # not none
 
-		# loop		-> connect:
-		# 			thread	-> authenticate & serve
-		time.sleep(20)
-		log.info('Server Daemon run ends !')
+        # loop		-> connect:
+        # 			thread	-> authenticate & serve
+        time.sleep(20)
+        log.info('Server Daemon run ends !')
