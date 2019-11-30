@@ -3,7 +3,7 @@ import os, time, sys, pathlib
 from taskmaster.common.configmap import ProcessState
 from taskmaster.common.program import Program
 
-from taskmaster.utils.threading import thread_start
+from taskmaster.utils.utils import thread_start
 
 
 class Process:

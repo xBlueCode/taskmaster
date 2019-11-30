@@ -5,7 +5,7 @@ import signal
 from taskmaster.common.daemonizer import Daemon
 from taskmaster.common.config import ConfigServer
 from taskmaster.utils.sig_handler import sigchld_handler
-from taskmaster.utils.threading import thread_start
+from taskmaster.utils.utils import thread_start, socket_bind
 from taskmaster.utils import log
 
 from taskmaster.server.state_manager import state_manager
@@ -23,20 +23,18 @@ class ServerDaemon(Daemon):
         self.config = config
         self.addr = ('127.0.0.1', 4321)  # temp: to be parsed from config file
         self.socket = socket.socket()  # or in run
+        self.socket_bound = False
         dashboard.init(config.data)  # change position
         signal.signal(signal.SIGCHLD, sigchld_handler)
 
     def run(self):
         log.info('running the server daemon')
-        log.info('starting thread: state_handler')
-        try:
-            self.socket.bind(self.addr)
-            self.socket.listen(5)
-            log.debug('server socket has been bound')
-        except:
-            log.error('exception occurred upon binding the server socket')
-        thread_start(state_manager, ())  # not none
 
+        log.info('binding the server socket')
+        self.socket_bound = socket_bind()
+
+        log.info('starting thread: state_handler')
+        thread_start(state_manager, ())  # not none
         # thread	-> buff_handler
         log.info('starting thread: buff_manager')
         thread_start(buff_manager, ())  # not none
@@ -45,7 +43,10 @@ class ServerDaemon(Daemon):
         log.info('starting thread: launch_manager')
         thread_start(launch_manager, ())  # not none
 
-        # loop		-> connect:
-        # 			thread	-> authenticate & serve
+        log.info('starting thread: service_manager')
+        thread_start(ser
+        _manager, ())
+
         time.sleep(20)
         log.info('Server Daemon run ends !')
+
