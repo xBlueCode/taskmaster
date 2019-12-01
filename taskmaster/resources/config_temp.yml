@@ -1,7 +1,7 @@
-connection:
+conn:
   url: 127.0.0.1:9001
   username: xbluecode
-  password: 123456789
+  password: '123456789'
 
 server:
   logfile: /tmp/tm_01.log
@@ -12,6 +12,10 @@ server:
 
 client:
   prompt: 'tmaster $'
+  host: 127.0.0.1
+  port: 9001
+  username: xbluecode
+  password: '123456789'
 
 programs:
   - printargs:
