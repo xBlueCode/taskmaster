@@ -7,7 +7,7 @@ from taskmaster.client.client import Client
 
 class TaskmasterCmd(cmd.Cmd):
     def __init__(self, prompt: str = '(taskmaster)$> '):
-        super.__init__()
+        cmd.Cmd.__init__(self)
         self.prompt = prompt
 
     # intro = 'Welcome to the taskmaster shell.   Type help or ? to list commands.\n'
