@@ -1,4 +1,4 @@
-conn:
+connection:
   url: 127.0.0.1:9001
   username: xbluecode
   password: '123456789'
