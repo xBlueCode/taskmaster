@@ -11,6 +11,7 @@ from taskmaster.utils import log
 from taskmaster.server.state_manager import state_manager
 from taskmaster.server.launch_manager import launch_manager
 from taskmaster.server.buff_manager import buff_manager
+from taskmaster.server.service_manager import service_manager
 
 from taskmaster.server.dashboard import dashboard
 
@@ -44,8 +45,7 @@ class ServerDaemon(Daemon):
         thread_start(launch_manager, ())  # not none
 
         log.info('starting thread: service_manager')
-        thread_start(ser
-        _manager, ())
+        thread_start(service_manager, ())
 
         time.sleep(20)
         log.info('Server Daemon run ends !')
