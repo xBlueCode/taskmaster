@@ -29,6 +29,7 @@ class Config:
         if self.data is None:
             logger_std.error('Failed to load config file')
             self.valid = False
+            return
         self.valid = self.parse_sections(section_base)
         if not self.valid:
             return
@@ -92,7 +93,7 @@ class ConfigClient(Config):
         if not self.valid:
             logger_std.error('failed to create a valid Client Config')
             return
-        for cattr, ctype in client_attr:
+        for cattr, ctype in client_attr.items():
             val = self.client.get(cattr)
             if val and isinstance(val, ctype):
                 setattr(self, cattr, val)
