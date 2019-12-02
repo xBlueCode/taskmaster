@@ -2,6 +2,8 @@ connection:
   url: 127.0.0.1:9001
 
 server:
+  host: '127.0.0.1'
+  port: 2424
   logfile: /tmp/tm_01.log
   loglevel: 'debug'
   pidfile: /tmp/tm.pid
@@ -15,7 +17,7 @@ server:
 client:
   prompt: 'tmaster $'
   host: 127.0.0.1
-  port: 9001
+  port: 2424
   username: xbluecode
   password: '123456789'
 
