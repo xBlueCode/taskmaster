@@ -31,8 +31,11 @@ class ServerDaemon(Daemon):
     def run(self):
         log.info('running the server daemon')
 
+        log.info('clients: {0}'.format(self.config.clients))
+        log.info('log level {0}'.format(self.config.loglevel))
+
         log.info('binding the server socket')
-        self.socket_bound = socket_bind()
+        self.socket_bound = socket_bind(self.addr[0], self.addr[1])
 
         log.info('starting thread: state_handler')
         thread_start(state_manager, ())  # not none

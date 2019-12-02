@@ -1,14 +1,16 @@
 connection:
   url: 127.0.0.1:9001
-  username: xbluecode
-  password: '123456789'
 
 server:
   logfile: /tmp/tm_01.log
-  loglevel: info
+  loglevel: 'debug'
   pidfile: /tmp/tm.pid
   umask: 022
   user: xblueadmin
+  clients:
+    xbluecode: '1234'
+    xblack: 'xxxxxx'
+    xgreycode: '5678'
 
 client:
   prompt: 'tmaster $'
