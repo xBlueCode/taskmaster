@@ -17,6 +17,8 @@ client_attr = {
 }
 
 server_attr = {
+    'host': (str, '127.0.0.1'),
+    'port': (int, 4321),
     'logfile': (str, '.tm_log'),
     'loglevel': (str, 'info'),
     'pidfile': (str, '.pidfile'),
@@ -77,12 +79,14 @@ class Config:
 class ConfigServer(Config):
     def __init__(self, filepath):
         super().__init__(filepath)
+        self.host = None
+        self.port = None
         self.server = None
         self.logfile = None
         self.loglevel = None
         self.pidfile = None
         self.umask = None
-        self.clients = []
+        self.clients = {}
         if not self.valid:
             logger_std.error('failed to create a valid Server Config')
             return

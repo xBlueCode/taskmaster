@@ -11,7 +11,7 @@ from taskmaster.utils import log
 from taskmaster.server.state_manager import state_manager
 from taskmaster.server.launch_manager import launch_manager
 from taskmaster.server.buff_manager import buff_manager
-from taskmaster.server.service_manager import service_manager
+from taskmaster.server.clients_manager import clients_manager
 
 from taskmaster.server.dashboard import dashboard
 
@@ -22,7 +22,7 @@ class ServerDaemon(Daemon):
     def __init__(self, pidfile, config: ConfigServer):
         super().__init__(pidfile)
         self.config = config
-        self.addr = ('127.0.0.1', 4321)  # temp: to be parsed from config file
+        # self.addr = ('127.0.0.1', 4321)  # temp: to be parsed from config file
         self.socket = socket.socket()  # or in run
         self.socket_bound = False
         dashboard.init(config.data)  # change position
@@ -31,11 +31,8 @@ class ServerDaemon(Daemon):
     def run(self):
         log.info('running the server daemon')
 
-        log.info('clients: {0}'.format(self.config.clients))
-        log.info('log level {0}'.format(self.config.loglevel))
-
         log.info('binding the server socket')
-        self.socket_bound = socket_bind(self.addr[0], self.addr[1])
+        self.socket_bound = socket_bind(self.config.host, self.config.port)
 
         log.info('starting thread: state_handler')
         thread_start(state_manager, ())  # not none
@@ -47,8 +44,8 @@ class ServerDaemon(Daemon):
         log.info('starting thread: launch_manager')
         thread_start(launch_manager, ())  # not none
 
-        log.info('starting thread: service_manager')
-        thread_start(service_manager, ())
+        log.info('starting thread: clients_manager')
+        thread_start(clients_manager, (self.socket, self.config))
 
         time.sleep(20)
         log.info('Server Daemon run ends !')
