@@ -16,6 +16,14 @@ client_attr = {
     'password': str
 }
 
+server_attr = {
+    'logfile': (str, '.tm_log'),
+    'loglevel': (str, 'info'),
+    'pidfile': (str, '.pidfile'),
+    'umask': (str, '00777'),
+    'clients': (dict, {})
+}
+
 
 class Config:
     """\
@@ -69,6 +77,12 @@ class Config:
 class ConfigServer(Config):
     def __init__(self, filepath):
         super().__init__(filepath)
+        self.server = None
+        self.logfile = None
+        self.loglevel = None
+        self.pidfile = None
+        self.umask = None
+        self.clients = []
         if not self.valid:
             logger_std.error('failed to create a valid Server Config')
             return
@@ -76,11 +90,25 @@ class ConfigServer(Config):
         if not self.valid:
             logger_std.error('failed to create a valid Server Config')
             return
+        for sattr, tdef in server_attr.items():
+            val = self.server.get(sattr)
+            # setattr(self, sattr, check_type(val, tdef[0], tdef[1]))
+            if val and type(val) == tdef[0]:
+                setattr(self, sattr, val)
+            else:
+                 setattr(self, sattr, tdef[1])
+
+def check_type(val, t:type, def_val):
+    if val and isinstance(val, t):
+        return val
+    else:
+        return def_val
 
 
 class ConfigClient(Config):
     def __init__(self, filepath):
         super().__init__(filepath)
+        self.client = None
         self.prompt = None
         self.host = None
         self.port = None
