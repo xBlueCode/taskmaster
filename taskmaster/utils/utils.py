@@ -1,4 +1,5 @@
 import threading
+import socket
 
 
 def thread_start(target, args):
@@ -6,7 +7,7 @@ def thread_start(target, args):
     thread.start()
 
 
-def socket_bind(socket, addr) -> bool:
+def socket_bind(socket: socket.socket, addr) -> bool:
     try:
         socket.bind(addr)
         socket.listen(5)
