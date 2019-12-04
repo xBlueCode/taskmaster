@@ -1,55 +1,70 @@
 import cmd
-import os
+import os, sys
 from taskmaster.common import config as tm_config
 from taskmaster.utils import log
+from taskmaster.client.tm_cmd import TaskmasterCmd
 from getpass import getpass
 import socket
 
-log = log.get_logger('server')
+
+log = log.get_logger('client')
+
+ATTEMPT_MAX = 3
 
 class Client():
 
     def __init__(self, configFile : str = None):
         self.config = tm_config.ConfigClient(configFile)
+        self.csocket = socket.socket()
 
     def start(self):
-        log.info('running the client daemon')
-        attempt = 0
-        while True:
-            if self.connect() == False:
-                attempt += 1
-                log.error('failed connection to server. Attempt:'+attempt)
-                if attempt == 3:
-                    return False
-            else:
-                break
-        log.info('created connection to server')
-        attempt = 0
-        while True:
-            if not self.authenticate():
-                attempt += 1
-                log.error('failed authentication to server. Attempt:'+attempt)
-                if attempt == 3:
-                    return False
-            else:
-                break
-        log.info('authenticated to server')
 
-    def connect(self):
+        print('Starting the client ...')
+        if not self.connect():
+            return -1
+        if not self.try_authenticate():
+            return -1
+        return self.cli()
+
+    def connect(self) -> bool:
+        # return True #  test
         if not self.config.host:
             self.config.host = input("Enter host ip: ")
         if not self.config.port:
             self.config.port = input("Enter port: ")
-        # if not socket.create_connection((self.config.host, self.config.host)):
-        #     print('Failed connection to server.')
-        return True
+        try:
+            self.csocket.connect((self.config.host, self.config.port))
+            print('connected to the server ({0}:{1})'
+                  .format(self.config.host, self.config.port))
+            return True
+        except:
+            print('failed to connect the server ({0}:{1})'
+                  .format(self.config.host, self.config.port), file=sys.stderr)
+            return False
 
-    def authenticate(self):
+    def try_authenticate(self) -> bool:
+        attempt = ATTEMPT_MAX
+        while attempt > 0:
+            if self.authenticate():
+                print('client authenticated successfully on the server')
+                return True
+            else:
+                attempt -= 1
+        print("failed to authenticate on the server", file= sys.stderr)
+        return False
+
+    def authenticate(self) -> bool:
         if not self.config.username:
             self.config.username = input("Enter username: ")
         if not self.config.password:
-            self.config.password = getpass("Enter password: ")
-        # if not socket.AUTHENTIFICATE(username + password):
-        #     print('Failed to authentificate user'+self.config.username)
-        #     return False
-        return True
+            # self.config.password = getpass("Enter password: ")
+            self.config.password = input("Enter password: ")
+        if self.config.password == 'aaa':  # tbi
+            return True
+        self.config.password = None
+        return False
+
+    def cli(self):
+        cmd = TaskmasterCmd('Hello>$ ')
+        cmd.cmdloop()
+        return 0

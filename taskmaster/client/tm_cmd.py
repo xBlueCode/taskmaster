@@ -3,7 +3,7 @@ import os, sys
 from taskmaster.common import config as tm_config
 from taskmaster.utils import log
 
-from taskmaster.client.client import Client
+# from taskmaster.client.client import Client
 
 class TaskmasterCmd(cmd.Cmd):
     def __init__(self, prompt: str = '(taskmaster)$> '):

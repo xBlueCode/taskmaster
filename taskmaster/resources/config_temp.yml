@@ -17,7 +17,7 @@ server:
 client:
   prompt: 'tmaster $'
   host: 127.0.0.1
-  port: 2424
+#  port: 2424
   username: xbluecode
   password: '123456789'
 

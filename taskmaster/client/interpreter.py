@@ -4,7 +4,7 @@ from taskmaster.common import config as tm_config
 from taskmaster.utils import log
 
 from taskmaster.client.client import Client
-from taskmaster.client.tm_cmd import TaskmasterCmd
+# from taskmaster.client.tm_cmd import TaskmasterCmd
 
 
 
@@ -14,8 +14,9 @@ if __name__ == '__main__':
     # else:
     #     client = Client(None)
     client = Client('../resources/config_temp.yml')
-    if client.start() == False:
-        print("STOP")
-    # TaskmasterCli().cmdloop()
-    tm_client = TaskmasterCmd('Hello>$ ')
-    tm_client.cmdloop()
+    client.start()
+    # if client.start() == False:
+    #     print("STOP")
+    # # TaskmasterCli().cmdloop()
+    # tm_client = TaskmasterCmd('Hello>$ ')
+    # tm_client.cmdloop()
