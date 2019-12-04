@@ -59,10 +59,18 @@ class Client():
         if not self.config.password:
             # self.config.password = getpass("Enter password: ")
             self.config.password = input("Enter password: ")
-        if self.config.password == 'aaa':  # tbi
-            return True
-        self.config.password = None
-        return False
+        query = 'auth\r\n{0}\r\n{1}\r\n'\
+            .format(self.config.username, self.config.password)
+        self.csocket.send(query.encode('utf-8'))
+        response = self.csocket.recv(1024).decode('utf-8')
+        log.debug('received {0} from server'.format(response))
+        response = response.rsplit('\r\n')
+        log.debug('response list {0}'.format(response))
+        if response[0] != 'OK':
+            log.info('failed to authenticate with response: {0}'.format(response[0]))
+            self.config.password = None
+            return False
+        return True
 
     def cli(self):
         cmd = TaskmasterCmd('Hello>$ ')

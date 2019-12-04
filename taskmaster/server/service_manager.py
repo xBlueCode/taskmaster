@@ -4,23 +4,32 @@ from taskmaster.utils import log
 log = log.get_logger('service_manager')
 
 def service_manager(cs:socket.socket, addr, config):
-    cmd = cs.recv(1024).decode('utf-8')
-    if cmd == 'auth':
-        username, auth = authenticate_client(cs, addr, config)
-    else:
-        log.debug('Not expected cmd from the clinet {0}'.format(cmd))
-        return
+    username, auth = authenticate_client(cs, addr, config)
     if not auth:
         log.info('client {0} failed to authenticate'.format(username))
         return
+    # serve_client()
 
 
 def authenticate_client(cs, addr, configServer) -> (str, bool):
-    username = cs.recv(256).decode('utf-8')
-    password = cs.recv(256).decode('utf-8')
-    if username not in configServer.clients.keys():
-        return username, False
-    elif password != configServer.clients.get(username):
-        return username, False
+    # username = cs.recv(256).decode('utf-8')
+    # password = cs.recv(256).decode('utf-8')
+    auth_query = cs.recv(1024).decode('utf-8')
+    log.debug('received auth query: {0}'.format(auth_query))
+    auth_list = auth_query.rsplit('\r\n')
+    log.debug('auth list: {0}'.format(auth_list))
+    if len(auth_list) < 3 or auth_list[0] != 'auth':
+        cs.send('KO-1'.encode('utf-8'))
+        return None, False
+    elif auth_list[1] not in configServer.clients.keys():
+        cs.send('KO-2'.encode('utf-8'))
+        return auth_list[1], False
+    elif auth_list[2] != configServer.clients.get(auth_list[1]):
+        cs.send('KO-3'.encode('utf-8'))
+        return auth_list[1], False
     else:
-        return username, True
+        cs.send('OK'.encode('utf-8'))
+        return auth_list[1], True
+
+def serve_client():
+    print('do something !')
