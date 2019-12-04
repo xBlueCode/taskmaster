@@ -45,7 +45,7 @@ class ServerDaemon(Daemon):
         thread_start(launch_manager, ())  # not none
 
         log.info('starting thread: clients_manager')
-        thread_start(clients_manager, (self.socket, self.config))
+        thread_start(clients_manager, (self, ))
 
         time.sleep(20)
         log.info('Server Daemon run ends !')
