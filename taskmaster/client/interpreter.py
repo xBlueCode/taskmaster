@@ -13,6 +13,9 @@ if __name__ == '__main__':
     #     client = Client(sys.argv[0])
     # else:
     #     client = Client(None)
+
+    log.init('/tmp/ctm.log')
+
     client = Client('../resources/config_temp.yml')
     client.start()
     # if client.start() == False:
