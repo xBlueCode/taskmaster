@@ -72,7 +72,9 @@ class Client():
             return False
         return True
 
+
+
     def cli(self):
-        cmd = TaskmasterCmd('Hello>$ ')
+        cmd = TaskmasterCmd(self, 'Hello>$ ')
         cmd.cmdloop()
         return 0

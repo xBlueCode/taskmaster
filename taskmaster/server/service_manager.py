@@ -3,12 +3,13 @@ from taskmaster.utils import log
 
 log = log.get_logger('service_manager')
 
+
 def service_manager(cs:socket.socket, addr, config):
     username, auth = authenticate_client(cs, addr, config)
     if not auth:
         log.info('client {0} failed to authenticate'.format(username))
         return
-    # serve_client()
+    serve_client(cs, addr, config)
 
 
 def authenticate_client(cs, addr, configServer) -> (str, bool):
@@ -31,5 +32,10 @@ def authenticate_client(cs, addr, configServer) -> (str, bool):
         cs.send('OK'.encode('utf-8'))
         return auth_list[1], True
 
-def serve_client():
-    print('do something !')
+
+def serve_client(cs, addr, configServer):
+    while True:
+        query = cs.recv(1024).decode('utf-8')
+        query_list = query.rsplit('\r\n')
+        log.info('query: {0}'.format(query_list))
+
