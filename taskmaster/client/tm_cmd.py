@@ -2,6 +2,7 @@ import cmd
 import os, sys
 from taskmaster.common import config as tm_config
 from taskmaster.utils import log
+from taskmaster.utils import utils
 
 
 class TaskmasterCmd(cmd.Cmd):
@@ -17,6 +18,11 @@ class TaskmasterCmd(cmd.Cmd):
     def default(self, line):
         query = "{0}\r\n".format(line)
         self.client.csocket.send(query.encode('utf-8'))
+        # response = self.client.csocket.recv(1024).decode('utf-8')
+        response = utils.socket_recv(self.client.csocket)
+        if response != '':
+            print(response)
+
 
     def do_shelltaskmaster(self, line):
         print("running shell command:", line)

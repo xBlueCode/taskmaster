@@ -1,6 +1,8 @@
 import socket
 from taskmaster.utils import log
 
+from taskmaster.utils import utils
+
 log = log.get_logger('service_manager')
 
 
@@ -38,4 +40,8 @@ def serve_client(cs, addr, configServer):
         query = cs.recv(1024).decode('utf-8')
         query_list = query.rsplit('\r\n')
         log.info('query: {0}'.format(query_list))
+        utils.socket_send(cs, 'something from server')
+        # cs.send("something from server".encode('utf-8'))
 
+
+# def service_start(prog_name):
