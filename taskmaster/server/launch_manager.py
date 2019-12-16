@@ -39,7 +39,7 @@ def launch_program(program: Program, force_start=False):
     log.info('launching {0}'.format(program.cmd.split(' ')))
     for process in program.processes:
         log.debug('Starting new process !')
-        dashboard.name_procs[process.name] = process # move to higher level
+        # dashboard.name_procs[process.name] = process # move to higher level
         if program.autostart == configmap.Start.NO:
             process.state = ProcessState.STOPPED
         else:
@@ -72,3 +72,4 @@ def launch_process(program: Program, process: Process, retry:bool = False):
     log.info('process {0} has been executed with pid={1}'.format(process.name, pid))
     for fd, file in fds.items():
         log.info('fd={0} file={1}'.format(fd, file))
+    dashboard.name_procs[process.name] = process # move to higher level
