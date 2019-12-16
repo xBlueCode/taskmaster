@@ -3,6 +3,7 @@ import socket
 
 SOCKET_HEAD = 10
 
+
 def thread_start(target, args):
     thread = threading.Thread(target=target, args=args)
     thread.start()
@@ -16,6 +17,7 @@ def socket_bind(socket: socket.socket, addr) -> bool:
     except:
         return False
 
+
 def socket_recv(socket: socket.socket) -> str:
     try:
         size = socket.recv(SOCKET_HEAD).decode('utf-8')
@@ -26,6 +28,7 @@ def socket_recv(socket: socket.socket) -> str:
         return data
     except ConnectionResetError as err:
         raise ConnectionResetError
+
 
 def socket_send(socket: socket.socket, data: str):
     try:

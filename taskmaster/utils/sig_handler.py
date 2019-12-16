@@ -6,6 +6,7 @@ from taskmaster.utils import log
 
 log = log.get_logger('sig_handler')
 
+
 def sigchld_handler(signum, frame):
     if signum != signal.SIGCHLD:
         return

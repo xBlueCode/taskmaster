@@ -16,13 +16,15 @@ class TaskmasterCmd(cmd.Cmd):
     # prompt = '(taskmaster)$> '
 
     def default(self, line):
-        query = "{0}\r\n".format(line)
-        self.client.csocket.send(query.encode('utf-8'))
+        query = "{0}".format(line)
+        # self.client.csocket.send(query.encode('utf-8'))
         # response = self.client.csocket.recv(1024).decode('utf-8')
-        response = utils.socket_recv(self.client.csocket)
-        if response != '':
+        utils.socket_send(self.client.csocket, query)
+        while True:
+            response = utils.socket_recv(self.client.csocket)
+            if response == '' or response == '\r':
+                break
             print(response)
-
 
     def do_shelltaskmaster(self, line):
         print("running shell command:", line)

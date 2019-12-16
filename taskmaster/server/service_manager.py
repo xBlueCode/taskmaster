@@ -2,8 +2,14 @@ import socket
 from taskmaster.utils import log
 
 from taskmaster.utils import utils
+from taskmaster.server.services import serve_start
 
 log = log.get_logger('service_manager')
+
+
+services = {
+    'start': serve_start
+}
 
 
 def service_manager(cs:socket.socket, addr, config):
@@ -37,11 +43,16 @@ def authenticate_client(cs, addr, configServer) -> (str, bool):
 
 def serve_client(cs, addr, configServer):
     while True:
-        query = cs.recv(1024).decode('utf-8')
+        # query = cs.recv(1024).decode('utf-8')
+        query = utils.socket_recv(cs)
+        if query == '':
+            continue
         query_list = query.rsplit('\r\n')
         log.info('query: {0}'.format(query_list))
-        utils.socket_send(cs, 'something from server')
-        # cs.send("something from server".encode('utf-8'))
-
-
-# def service_start(prog_name):
+        # utils.socket_send(cs, 'something from server')
+        if query_list[0] in services.keys():
+            log.info('found service')
+            service = services.get(query_list[0])
+            service(cs, query_list)
+        else:
+            utils.socket_send(cs, '\r')
