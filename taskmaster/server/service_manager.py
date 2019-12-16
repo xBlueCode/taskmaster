@@ -47,12 +47,13 @@ def serve_client(cs, addr, configServer):
         query = utils.socket_recv(cs)
         if query == '':
             continue
-        query_list = query.rsplit('\r\n')
+        query_list = query.split()
         log.info('query: {0}'.format(query_list))
         # utils.socket_send(cs, 'something from server')
         if query_list[0] in services.keys():
             log.info('found service')
             service = services.get(query_list[0])
             service(cs, query_list)
-        else:
-            utils.socket_send(cs, '\r')
+        utils.socket_send(cs, '\r')
+        # else:
+        #     utils.socket_send(cs, '\r')
