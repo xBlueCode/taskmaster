@@ -1,10 +1,11 @@
-import os, sys, signal
+import os, sys, time, signal
 
 from taskmaster.common.process import Process, ProcessState
 
 from taskmaster.common.program import Program
 
 from taskmaster.utils import log
+from taskmaster.utils import utils
 from taskmaster.server.dashboard import dashboard
 
 from taskmaster.common import configmap
@@ -66,6 +67,8 @@ def launch_process(program: Program, process: Process, retry:bool = False):
         process.retries = process.retries - 1
         if process.retries < 1:
             return
+    while process.state == ProcessState.STOPPING:  # recheck
+        time.sleep(1)
     pid, fds = process.exec(program)
     dashboard.pid_procs[pid] = process
     dashboard.fds_buff.update(fds)
@@ -87,3 +90,8 @@ def kill_process(process: Process, stopsig=signal.SIGKILL):
         log.debug('killing signal has been sent to {0}'.format(process.pid))
     except OSError:
         log.error('failed to kill process {0}:[{1}]'.format(process.name, process.pid))
+
+
+def kill_program(program: Program):
+    for process in program.processes:
+        utils.thread_start(kill_process, (process, program.stopsig))

@@ -3,11 +3,14 @@ from taskmaster.utils import log
 
 from taskmaster.utils import utils
 from taskmaster.common.configmap import ProcessState
+from taskmaster.common import config as tm_config
 
+from taskmaster.server import dashboard as mod_dash
 from taskmaster.server.dashboard import dashboard
 
 from taskmaster.server.launch_manager import launch_process
 from taskmaster.server.launch_manager import kill_process
+from taskmaster.server.launch_manager import kill_program
 
 log = log.get_logger('services')
 
@@ -79,7 +82,23 @@ def serve_stop(cs, query_list):
 
 
 def serve_relaod(cs, query_list):
-    print('do something !')
+    log.info('serving: reload: {0}'.format(query_list))
+    if len(query_list) < 2:
+        utils.socket_send(cs, 'err: config file is required')
+        return
+    config_server = tm_config.ConfigServer(query_list[1])
+    if not config_server.valid:
+        log.debug('invalid config has occurred')
+        utils.socket_send(cs, 'warn: the config is invalid')
+        return
+    new_programs = mod_dash.load_programs(config_server.data)
+    old_programs = dashboard.programs
+    nprog_names = list(new_programs.keys())
+    oprog_names = list(old_programs.keys())
+    for oprog_name, oprog in old_programs.items():
+        if oprog_name not in nprog_names:
+            utils.thread_start(kill_program, (oprog, ))
+    # ...
 
 
 def serve_config(cs, query_list):
