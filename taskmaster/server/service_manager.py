@@ -2,13 +2,17 @@ import socket
 from taskmaster.utils import log
 
 from taskmaster.utils import utils
-from taskmaster.server.services import serve_start
+from taskmaster.server import services
 
 log = log.get_logger('service_manager')
 
 
 services = {
-    'start': serve_start
+    'start': services.serve_start,
+    'stop' : services.serve_stop,
+    'attach': services.serve_attach,
+    'reload': services.serve_relaod,
+    'status': services.serve_status
 }
 
 

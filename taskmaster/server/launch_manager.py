@@ -1,4 +1,4 @@
-import os, sys
+import os, sys, signal
 
 from taskmaster.common.process import Process, ProcessState
 
@@ -73,3 +73,17 @@ def launch_process(program: Program, process: Process, retry:bool = False):
     for fd, file in fds.items():
         log.info('fd={0} file={1}'.format(fd, file))
     dashboard.name_procs[process.name] = process # move to higher level
+
+
+def kill_process(process: Process, stopsig=signal.SIGKILL):
+    log.debug('killing process {0}'.format(process.name))
+    if process.state != ProcessState.STARTING \
+            and process.state != ProcessState.BACKOFF \
+            and process.state != ProcessState.RUNNING:
+        return 1
+    process.state = ProcessState.STOPPING
+    try:
+        os.kill(process.pid, stopsig)  # get signal from data
+        log.debug('killing signal has been sent to {0}'.format(process.pid))
+    except OSError:
+        log.error('failed to kill process {0}:[{1}]'.format(process.name, process.pid))

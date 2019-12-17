@@ -11,6 +11,7 @@ log = log.get_logger('client')
 
 ATTEMPT_MAX = 3
 
+
 class Client():
 
     def __init__(self, configFile : str = None):
@@ -71,8 +72,6 @@ class Client():
             self.config.password = None
             return False
         return True
-
-
 
     def cli(self):
         cmd = TaskmasterCmd(self, 'Hello>$ ')

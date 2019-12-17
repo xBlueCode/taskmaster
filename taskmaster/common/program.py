@@ -38,7 +38,7 @@ class Program:
         self.starttime = int_def(data_prog.get('starttime'), 0)
         self.stoptime = int_def(data_prog.get('stoptime'), 0)
         self.retries = int_def(data_prog.get('retries'), 0)
-        self.stopsig = get_signal(data_prog.get('stopsig'), None)
+        self.stopsig = get_signal(data_prog.get('stopsig'))
         self.env = data_prog.get('env')
         if not isinstance(self.env, dict):
             self.env = {}
@@ -84,4 +84,3 @@ def int_def(value, default=0):
         return int(value)
     else:
         return default
-

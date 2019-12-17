@@ -49,4 +49,3 @@ class ServerDaemon(Daemon):
 
         time.sleep(20)
         log.info('Server Daemon run ends !')
-
