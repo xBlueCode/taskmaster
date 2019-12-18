@@ -25,6 +25,15 @@ def launch_manager():
         launch_program(program)
 
 
+def reload_launch_manager(new_programs: {str: Program}):
+    log.info('starting reload launch manager')
+    old_programs = dashboard.programs
+    nprog_names = list(new_programs.keys())
+    oprog_names = list(old_programs.keys())
+    for oprog_name, oprog in old_programs.items():
+        if oprog_name not in nprog_names:
+            dashboard.prog_to_remove.append(oprog_name)
+
 def launch_program(program: Program, force_start=False):
     """
     Launches a program by launching all the processes created by this program

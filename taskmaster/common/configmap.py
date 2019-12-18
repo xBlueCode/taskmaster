@@ -12,6 +12,7 @@ class ProcessState(Enum):
     STOPPING = auto()
     EXITED = auto()
     FATAL = auto()
+    REMOVED = auto()
     UNKNOWN = auto()
 
 

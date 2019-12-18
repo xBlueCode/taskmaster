@@ -23,6 +23,9 @@ def state_manager():
 
             try:
                 process.control_starting_state(program)
+                if process.to_remove:
+                    clean_proccess(process, ProcessState.REMOVED)
+                    program.processes.pop(process.name)
                 if process.state == ProcessState.RUNNING:
                     log.info('process {0} exited with code {1}'.format(pid_exit[0], pid_exit[1]))
                     clean_proccess(process, ProcessState.EXITED)
