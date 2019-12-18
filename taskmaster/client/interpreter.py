@@ -7,7 +7,6 @@ from taskmaster.client.client import Client
 # from taskmaster.client.tm_cmd import TaskmasterCmd
 
 
-
 if __name__ == '__main__':
     # if len(sys.argv) > 1:
     #     client = Client(sys.argv[0])

@@ -11,6 +11,7 @@ log = log.get_logger('client')
 
 ATTEMPT_MAX = 3
 
+
 class Client():
 
     def __init__(self, configFile : str = None):
@@ -73,6 +74,6 @@ class Client():
         return True
 
     def cli(self):
-        cmd = TaskmasterCmd('Hello>$ ')
+        cmd = TaskmasterCmd(self, 'Hello>$ ')
         cmd.cmdloop()
         return 0

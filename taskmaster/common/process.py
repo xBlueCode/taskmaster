@@ -1,4 +1,4 @@
-import os, time, sys, pathlib
+import os, time, sys, signal, pathlib
 
 from taskmaster.common.configmap import ProcessState
 from taskmaster.common.program import Program
@@ -112,3 +112,15 @@ class Process:
             self.state = ProcessState.RUNNING
         else:
             self.state = ProcessState.BACKOFF
+
+    def kill(self, stopsig=signal.SIGKILL):
+        if self.state != ProcessState.STARTING \
+                and self.state != ProcessState.BACKOFF \
+                and self.state != ProcessState.RUNNING:
+            return 1
+        self.state = ProcessState.STOPPING
+        try:
+            os.kill(self.pid, signal.SIGKILL)  # get signal from data
+            return 0
+        except OSError:
+            return 1

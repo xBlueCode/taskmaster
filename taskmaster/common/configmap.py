@@ -60,7 +60,7 @@ SIGNALS = {
 }
 
 
-def get_signal(signame: str, default):
+def get_signal(signame: str, default = signal.SIGKILL):
     sig = SIGNALS.get(signame.lower())
     if sig:
         return sig

@@ -1,14 +1,27 @@
 import socket
 from taskmaster.utils import log
 
+from taskmaster.utils import utils
+from taskmaster.server import services
+
 log = log.get_logger('service_manager')
+
+
+services = {
+    'start': services.serve_start,
+    'stop' : services.serve_stop,
+    'attach': services.serve_attach,
+    'reload': services.serve_relaod,
+    'status': services.serve_status
+}
+
 
 def service_manager(cs:socket.socket, addr, config):
     username, auth = authenticate_client(cs, addr, config)
     if not auth:
         log.info('client {0} failed to authenticate'.format(username))
         return
-    # serve_client()
+    serve_client(cs, addr, config)
 
 
 def authenticate_client(cs, addr, configServer) -> (str, bool):
@@ -31,5 +44,20 @@ def authenticate_client(cs, addr, configServer) -> (str, bool):
         cs.send('OK'.encode('utf-8'))
         return auth_list[1], True
 
-def serve_client():
-    print('do something !')
+
+def serve_client(cs, addr, configServer):
+    while True:
+        # query = cs.recv(1024).decode('utf-8')
+        query = utils.socket_recv(cs)
+        if query == '':
+            continue
+        query_list = query.split()
+        log.info('query: {0}'.format(query_list))
+        # utils.socket_send(cs, 'something from server')
+        if query_list[0] in services.keys():
+            log.info('found service')
+            service = services.get(query_list[0])
+            service(cs, query_list)
+        utils.socket_send(cs, '\r')
+        # else:
+        #     utils.socket_send(cs, '\r')

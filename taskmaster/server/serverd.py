@@ -10,6 +10,7 @@ from taskmaster.server.server import ServerDaemon
 
 logger_std = log.get_logger('serverd')
 
+
 def main():
 	logger_std.info('Starting serverd')
 	# get config file from args.
@@ -20,8 +21,7 @@ def main():
 	logger_std.info('Starting server daemon')
 	server.start()
 
+
 if __name__ == '__main__':
 	log.init()
 	main()
-
-
