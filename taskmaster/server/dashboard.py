@@ -14,6 +14,7 @@ class Dashboard:
         self.pid_alive = []
         self.fds_buff = {}
         self.fds_zombie = []
+        self.prog_to_remove = []
 
     def init(self, data: dict):
         self.programs = load_programs(data)

@@ -29,6 +29,7 @@ class Process:
         self.name = '{0}_{1:03d}'.format(program.name, index)
         self.retries = program.retries
         self.fds = []
+        self.to_remove = False
 
     def exec(self, program):
         """

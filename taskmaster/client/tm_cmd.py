@@ -1,5 +1,5 @@
 import cmd
-import os, sys
+import os, sys, pathlib
 from taskmaster.common import config as tm_config
 from taskmaster.utils import log
 from taskmaster.utils import utils
@@ -17,6 +17,10 @@ class TaskmasterCmd(cmd.Cmd):
 
     def default(self, line):
         query = "{0}".format(line)
+        cmds = query.split()
+        if cmds[0] == 'config':
+            cmds[1] = self.resolve_path(cmds[1])
+        print(cmds)
         # self.client.csocket.send(query.encode('utf-8'))
         # response = self.client.csocket.recv(1024).decode('utf-8')
         utils.socket_send(self.client.csocket, query)
@@ -41,3 +45,9 @@ class TaskmasterCmd(cmd.Cmd):
     def do_EOF(self, line):
         "Exit with Ctrl-D"
         return True
+
+    def resolve_path(self, path):
+        new_path = pathlib.Path(path)
+        if new_path.is_file():
+            return str(new_path.absolute())
+        return None

@@ -9,6 +9,7 @@ from taskmaster.server import dashboard as mod_dash
 from taskmaster.server.dashboard import dashboard
 
 from taskmaster.server.launch_manager import launch_process
+from taskmaster.server.launch_manager import reload_launch_manager
 from taskmaster.server.launch_manager import kill_process
 from taskmaster.server.launch_manager import kill_program
 
@@ -92,12 +93,13 @@ def serve_relaod(cs, query_list):
         utils.socket_send(cs, 'warn: the config is invalid')
         return
     new_programs = mod_dash.load_programs(config_server.data)
-    old_programs = dashboard.programs
-    nprog_names = list(new_programs.keys())
-    oprog_names = list(old_programs.keys())
-    for oprog_name, oprog in old_programs.items():
-        if oprog_name not in nprog_names:
-            utils.thread_start(kill_program, (oprog, ))
+    utils.thread_start(reload_launch_manager, (new_programs, ))
+    # old_programs = dashboard.programs
+    # nprog_names = list(new_programs.keys())
+    # oprog_names = list(old_programs.keys())
+    # for oprog_name, oprog in old_programs.items():
+    #     if oprog_name not in nprog_names:
+            # utils.thread_start(kill_program, (oprog, ))
     # ...
 
 
