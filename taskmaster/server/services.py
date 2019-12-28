@@ -71,7 +71,7 @@ def serve_stop(cs, query_list):
         else:
             utils.socket_send(cs, 'stopping {0}'.format(prog_name))
             program = dashboard.programs.get(prog_name)
-            for process in program.process:
+            for process in program.processes:
                 utils.socket_send(cs, 'process {0} is in {1} state'.
                                   format(process.name, process.state))
                 if process.state == ProcessState.STARTING \
