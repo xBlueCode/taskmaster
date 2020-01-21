@@ -1,11 +1,11 @@
-import os, time, pathlib
+import os, sys, time, pathlib
 from select import select
 
 from taskmaster.utils import log
 
 from taskmaster.server.dashboard import dashboard
 
-BUFF_SIZE = 1024
+BUFF_SIZE = 4
 TIME_SLEEP = 1
 DECODE_FORMAT = 'UTF-8'
 
@@ -53,3 +53,12 @@ def buff_manager():
                 if not file.exists():
                     file.touch(exist_ok=True)
                 file.write_text(data.decode(DECODE_FORMAT))
+                # with os.open(str(file.absolute()), mode='a') as f:
+                #     f.write(data)
+                # try:
+                #     log.debug('writing in {0}'.format(str(file.absolute())))
+                #     f = open(str(file.absolute()), mode='a')
+                #     f.write(data)
+                #     f.close()
+                # except OSError as err:
+                #     log.error('{0}'.format(err))
