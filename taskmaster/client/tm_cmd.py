@@ -17,10 +17,6 @@ class TaskmasterCmd(cmd.Cmd):
 
     def default(self, line):
         query = "{0}".format(line)
-        cmds = query.split()
-        if cmds[0] == 'config':
-            cmds[1] = self.resolve_path(cmds[1])
-        print(cmds)
         # self.client.csocket.send(query.encode('utf-8'))
         # response = self.client.csocket.recv(1024).decode('utf-8')
         utils.socket_send(self.client.csocket, query)
@@ -29,6 +25,20 @@ class TaskmasterCmd(cmd.Cmd):
             if response == '' or response == '\r':
                 break
             print(response)
+
+    def do_config(self, line):
+        cmds = line.split()
+        if len(cmds) > 1:
+            print("[!] Error too many arguments\nUsage : config [config_file]")
+        elif (self.resolve_path(cmds[0]) == None):
+            print("[!] Error incorrect path of file %s\nUsage : config [config_file]" % cmds[0])
+        elif (not os.access(self.resolve_path(cmds[0]), os.R_OK)):
+            print("[!] Error incorrect permission on config file\nAdd appropriate right"
+                  " to %s" % self.resolve_path(cmds[0]))
+        else:
+            print("Good config file here %s sent throw socket" % self.resolve_path(cmds[0]))
+            query = "{0}".format(line)
+            utils.socket_send(self.client.csocket, query)
 
     def do_shelltaskmaster(self, line):
         print("running shell command:", line)
