@@ -8,6 +8,7 @@ int main(int ac, char **av)
     while (sec > 0)
     {
         printf("%d\n", sec--);
+		fflush(stdout);
         sleep(1);
     }
     return (0);

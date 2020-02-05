@@ -20,6 +20,8 @@ class Program:
         self.name = name_prog
         self.cmd = data_prog.get('cmd')
         self.numprocs = int_def(data_prog.get('numprocs'), 0)
+        if type(self.cmd) is str:
+            self.argv = self.cmd.split(' ')
         if isinstance(data_prog.get('umask'), str):
             self.umask = int(data_prog.get('umask'), 8)
         else:
@@ -46,6 +48,8 @@ class Program:
         for ind in range(self.numprocs):
             self.processes.append(
                 Process(index=ind, program=self, retries=self.retries))
+        self.valid = False
+        self.is_valid()
 
     def stddir_def(self, value, default='/tmp/tm'):
         if isinstance(value, str):
@@ -73,6 +77,17 @@ class Program:
                 os.umask(self.umask)
         except OSError as err:
             pass
+
+    def is_valid(self):
+        try:
+            if len(self.argv) > 0 and os.access(self.argv[0], os.X_OK) \
+                    and self.numprocs > 0:
+                self.valid = True
+            else:
+                self.valid = False
+        except:
+            self.valid = False
+        return self.valid
 
 
 def int_def(value, default=0):

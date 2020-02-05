@@ -22,8 +22,8 @@ client:
   password: '1234'
 
 programs:
-  - printargs:
-      cmd: /tmp/print_args hello world from unit
+  - fakeprog:
+      cmd: /tmp/fake hello world from unit
       numprocs: 2
 #      umask: '00777'
       wdir: .
@@ -38,7 +38,7 @@ programs:
       stoptime: 10
       retries: 3
       stopsig: TERM
-      stddir: /tmp/cat1
+      stddir: /tmp/fakeprog_std
       env:
         ENV1: env1
         ENV2: env2

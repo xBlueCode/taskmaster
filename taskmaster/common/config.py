@@ -102,6 +102,7 @@ class ConfigServer(Config):
             else:
                  setattr(self, sattr, tdef[1])
 
+
 def check_type(val, t:type, def_val):
     if val and isinstance(val, t):
         return val

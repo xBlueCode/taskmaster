@@ -30,7 +30,7 @@ def load_programs(data: dict) -> {str: Program}:
     for prog in data.get('programs'):
         for prog_name, prog_data in prog.items():
             program = Program(prog_name, prog_data)
-            if isinstance(program.cmd, str) and program.numprocs > 0: # recheck
+            if program.is_valid(): # recheck
                 programs[prog_name] = program
     return programs
 

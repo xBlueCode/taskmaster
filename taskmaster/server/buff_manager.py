@@ -52,13 +52,5 @@ def buff_manager():
             if isinstance(file, pathlib.Path):
                 if not file.exists():
                     file.touch(exist_ok=True)
-                file.write_text(data.decode(DECODE_FORMAT))
-                # with os.open(str(file.absolute()), mode='a') as f:
-                #     f.write(data)
-                # try:
-                #     log.debug('writing in {0}'.format(str(file.absolute())))
-                #     f = open(str(file.absolute()), mode='a')
-                #     f.write(data)
-                #     f.close()
-                # except OSError as err:
-                #     log.error('{0}'.format(err))
+                with file.open('a') as f:
+                    f.write(data.decode(DECODE_FORMAT))

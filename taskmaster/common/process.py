@@ -73,8 +73,8 @@ class Process:
             # env, chdir, umask
             program.config_process()
             try:
-                argv = program.cmd.split(' ')
-                os.execve(argv[0], argv, os.environ)  # recheck !
+                # argv = program.cmd.split(' ')
+                os.execve(program.argv[0], program.argv, os.environ)  # recheck !
                 exit(1)
             except OSError as err:
                 exit(-1)

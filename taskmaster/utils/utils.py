@@ -21,7 +21,10 @@ def socket_bind(socket: socket.socket, addr) -> bool:
 def socket_recv(socket: socket.socket) -> str:
     try:
         size = socket.recv(SOCKET_HEAD).decode('utf-8')
-        size = int(size)
+        if size.isnumeric():
+            size = int(size)
+        else:
+            size = 0
         if size < 1:
             return ''
         data = socket.recv(size).decode('utf-8')

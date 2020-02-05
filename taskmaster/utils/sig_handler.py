@@ -16,5 +16,6 @@ def sigchld_handler(signum, frame):
             pid_wexit = os.waitpid(0, 0)
             dashboard.pid_wexit.append(pid_wexit)
         except OSError as err:
-            log.fatal('error occurred upon waiting pid')
+            log.fatal('error occurred upon waiting pid [errno = {}]'.
+                      format(err.errno))
             exit(1)
