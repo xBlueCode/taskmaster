@@ -21,7 +21,11 @@ class TaskmasterCmd(cmd.Cmd):
         # response = self.client.csocket.recv(1024).decode('utf-8')
         utils.socket_send(self.client.csocket, query)
         while True:
-            response = utils.socket_recv(self.client.csocket)
+            try:
+                response = utils.socket_recv(self.client.csocket)
+            except:
+                print("Connection Error!")
+                exit(0)
             if response == '' or response == '\r':
                 break
             print(response)
@@ -49,7 +53,7 @@ class TaskmasterCmd(cmd.Cmd):
         print(args)
 
     def do_exit(self, line):
-        "Exit"
+        print("Exiting ...")
         return True
 
     def do_EOF(self, line):

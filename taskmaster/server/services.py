@@ -65,6 +65,10 @@ def serve_restart(cs, query_list):
 def serve_stop(cs, query_list):
     log.info('serving: stop: {0}'.format(query_list))
     prog_names = query_list[1:]
+    stop_programs(cs, prog_names)
+
+
+def stop_programs(cs, prog_names):
     for prog_name in prog_names:
         if prog_name not in dashboard.programs.keys():
             utils.socket_send(cs, 'program {0} not found'.format(prog_name))
@@ -80,6 +84,7 @@ def serve_stop(cs, query_list):
                     utils.socket_send(cs, 'stopping process {0}'.format(process.name))
                     # kill process
                     utils.thread_start(kill_process, (process, program.stopsig))
+
 
 
 def serve_relaod(cs, query_list):
@@ -130,4 +135,9 @@ def serve_attach(cs, query_list):
 
 
 def serve_shutdown(cs, query_list):
-    print('do something !')
+    stop_programs(cs, dashboard.programs.keys())
+    utils.socket_send(cs, 'Shutting down !')
+    # utils.socket_send(cs, '\r')
+    cs.close()
+    from taskmaster.server.serverd import server
+    server.stop()

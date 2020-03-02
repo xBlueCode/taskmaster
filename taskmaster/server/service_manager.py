@@ -12,7 +12,8 @@ services = {
     'stop' : services.serve_stop,
     'attach': services.serve_attach,
     'reload': services.serve_relaod,
-    'status': services.serve_status
+    'status': services.serve_status,
+    'shutdown': services.serve_shutdown
 }
 
 

@@ -10,6 +10,9 @@ from taskmaster.server.server import ServerDaemon
 
 logger_std = log.get_logger('serverd')
 
+# server = ServerDaemon
+server = None
+
 
 def main():
 	logger_std.info('Starting serverd')

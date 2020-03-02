@@ -1,4 +1,4 @@
-import os, signal
+import os, signal, time
 
 from taskmaster.server.dashboard import dashboard
 
@@ -16,6 +16,9 @@ def sigchld_handler(signum, frame):
             pid_wexit = os.waitpid(0, 0)
             dashboard.pid_wexit.append(pid_wexit)
         except OSError as err:
+            if err.errno == 10:
+                time.sleep(1)
+                continue
             log.fatal('error occurred upon waiting pid [errno = {}]'.
                       format(err.errno))
             exit(1)
