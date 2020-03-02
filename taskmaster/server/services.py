@@ -139,5 +139,9 @@ def serve_shutdown(cs, query_list):
     utils.socket_send(cs, 'Shutting down !')
     # utils.socket_send(cs, '\r')
     cs.close()
-    from taskmaster.server.serverd import server
-    server.stop()
+    from taskmaster.server.serverd import serverd
+    try:
+        serverd.stop()
+    except Exception as ex:
+        log.debug("++++++++++++++++++++++++++ Failed !\n{}".format(ex))
+    # exit(0)

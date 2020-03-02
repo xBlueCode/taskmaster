@@ -4,7 +4,7 @@ connection:
 server:
   host: '127.0.0.1'
   port: 2424
-  logfile: /tmp/tm_01.log
+  logfile: /tmp/tm_02.log
   loglevel: 'debug'
   pidfile: /tmp/tm.pid
   umask: 022

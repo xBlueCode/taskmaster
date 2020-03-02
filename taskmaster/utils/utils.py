@@ -44,5 +44,5 @@ def socket_send(socket: socket.socket, data: str):
         socket.send(head.encode('utf-8'))
         if size > 0:
             socket.send(bytes)
-    except :
+    except:
         return

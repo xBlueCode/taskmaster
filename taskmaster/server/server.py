@@ -32,7 +32,8 @@ class ServerDaemon(Daemon):
         log.info('running the server daemon')
 
         log.info('binding the server socket')
-        self.socket_bound = socket_bind(self.socket, (self.config.host, self.config.port))
+        self.socket_bound = socket_bind(self.socket,
+                                        (self.config.host, self.config.port))
 
         log.info('starting thread: state_handler')
         thread_start(state_manager, ())  # not none
@@ -49,3 +50,7 @@ class ServerDaemon(Daemon):
 
         time.sleep(20)
         log.info('Server Daemon run ends !')
+
+
+    def stop(self):
+        super().stop()

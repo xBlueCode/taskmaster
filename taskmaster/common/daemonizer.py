@@ -41,7 +41,8 @@ class Daemon:
                 file.write(str(pid) + '\n')
                 # time.sleep(1)
         except PermissionError as err:
-            sys.stderr.write('error: failed to open pidfile, errno = {0}\n'.format(err.errno))
+            sys.stderr.write('error: failed to open pidfile, errno = {0}\n'
+                             .format(err.errno))
             sys.stderr.write('exiting with 1')
             exit(1)
         self.pid = pid
