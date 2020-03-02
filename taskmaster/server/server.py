@@ -52,5 +52,5 @@ class ServerDaemon(Daemon):
         log.info('Server Daemon run ends !')
 
 
-    def stop(self):
-        super().stop()
+    # def stop(self):
+    #     super().stop()

@@ -3,7 +3,7 @@ import logging
 EXC_INFO = False
 
 
-def init(filename='/tmp/tm02.log'):
+def init(filename='/tmp/tm.log'):
 	logging.basicConfig(
 		level=logging.DEBUG,
 		format='%(asctime)s : %(levelname)-8s : %(name)-16s : %(message)s',

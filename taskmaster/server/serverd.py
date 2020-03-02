@@ -27,6 +27,7 @@ class ServerD():
 	def stop(self):
 		logger_std.info('Stopping serverd')
 		self.server.stop()
+		exit(0)
 
 
 # def main():
@@ -39,9 +40,9 @@ class ServerD():
 # 	server.start()
 
 
-serverd = ServerD()
+serd = ServerD()
 
 
 if __name__ == '__main__':
 	log.init()
-	serverd.start()
+	serd.start()
