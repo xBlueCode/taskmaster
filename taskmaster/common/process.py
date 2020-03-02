@@ -74,7 +74,7 @@ class Process:
             program.config_process()
             try:
                 # argv = program.cmd.split(' ')
-                os.execve(program.argv[0], program.argv, os.environ)  # recheck !
+                os.execve(program.argv[0], program.argv, program.env)  # recheck !
                 exit(1)
             except OSError as err:
                 exit(-1)

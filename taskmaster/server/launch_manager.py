@@ -50,7 +50,8 @@ def launch_program(program: Program, force_start=False):
     for process in program.processes:
         log.debug('Starting new process !')
         # dashboard.name_procs[process.name] = process # move to higher level
-        if program.autostart == configmap.Start.NO:
+        log.debug('AUTO_START -------- {} === {}'.format(program.autostart, configmap.Start.NO))
+        if program.autostart is False:
             process.state = ProcessState.STOPPED
         else:
             launch_process(program, process)

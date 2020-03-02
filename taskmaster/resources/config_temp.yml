@@ -62,5 +62,25 @@ programs:
       env:
         ENV1: env1
         ENV2: env2
+  - program_02:
+      cmd: /Users/abbesbes/42/projects/linux/taskmaster/repo_gh/bins/program_01
+      numprocs: 2
+      #      umask: '00777'
+      wdir: .
+      autostart: No
+      autorestart: never # always, never, unexpected
+      delay: 0
+      exitcodes:
+        - 0
+        - 1
+        - 2
+      starttime: 0 # starting time (sec)
+      stoptime: 0
+      retries: 3
+      stopsig: kill
+      stddir: /tmp/prog01
+      env:
+        ENV1: env1
+        ENV2: env2
 #  - ls1:
 #      cmd: /bin/ls

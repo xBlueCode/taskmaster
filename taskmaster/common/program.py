@@ -41,7 +41,9 @@ class Program:
         self.stoptime = int_def(data_prog.get('stoptime'), 0)
         self.retries = int_def(data_prog.get('retries'), 0)
         self.stopsig = get_signal(data_prog.get('stopsig'))
-        self.env = data_prog.get('env')
+        self.env = os.environ.copy()
+        self.env.update(data_prog.get('env'))
+        # self.env = data_prog.get('env')
         if not isinstance(self.env, dict):
             self.env = {}
         self.processes = []

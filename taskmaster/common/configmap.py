@@ -19,6 +19,7 @@ class ProcessState(Enum):
 class Start(Enum):
     YES = auto()
     NO = auto()
+    FAKE = auto()
 
 class Restart(Enum):
     ALWAYS = auto()
@@ -76,7 +77,7 @@ def get_autostart(name:str, default=Start.NO):
         return name
     elif isinstance(name, str):
         autostart = AUTO_START.get(name.lower())
-        if autostart != None:
+        if autostart is not None:
             return autostart
         else:
             return default
