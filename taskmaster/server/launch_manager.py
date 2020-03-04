@@ -10,6 +10,8 @@ from taskmaster.server.dashboard import dashboard
 
 from taskmaster.common import configmap
 
+from taskmaster.server.services import stop_programs
+
 log = log.get_logger('launch_manager')
 
 
@@ -25,14 +27,15 @@ def launch_manager():
         launch_program(program)
 
 
-def reload_launch_manager(new_programs: {str: Program}):
-    log.info('starting reload launch manager')
-    old_programs = dashboard.programs
-    nprog_names = list(new_programs.keys())
-    oprog_names = list(old_programs.keys())
-    for oprog_name, oprog in old_programs.items():
-        if oprog_name not in nprog_names:
-            dashboard.prog_to_remove.append(oprog_name)
+def remove_progs():
+    log.info('Removing programs')
+    log.debug('Removing programs: {}'.format(dashboard.prog_to_remove))
+    stop_programs(None, dashboard.prog_to_remove)
+    for prog_name in dashboard.prog_to_remove:
+        prog = dashboard.programs.pop(prog_name, None)
+        for process in prog.processes:
+            dashboard.name_procs.pop(process.name)
+
 
 def launch_program(program: Program, force_start=False):
     """
@@ -50,7 +53,8 @@ def launch_program(program: Program, force_start=False):
     for process in program.processes:
         log.debug('Starting new process !')
         # dashboard.name_procs[process.name] = process # move to higher level
-        log.debug('AUTO_START -------- {} === {}'.format(program.autostart, configmap.Start.NO))
+        log.debug('AUTO_START -------- {} === {}'
+                  .format(program.autostart, configmap.Start.NO))
         if program.autostart is False:
             process.state = ProcessState.STOPPED
         else:
@@ -82,7 +86,8 @@ def launch_process(program: Program, process: Process, retry:bool = False):
     pid, fds = process.exec(program)
     dashboard.pid_procs[pid] = process
     dashboard.fds_buff.update(fds)
-    log.info('process {0} has been executed with pid={1}'.format(process.name, pid))
+    log.info('process {0} has been executed with pid={1}'
+             .format(process.name, pid))
     for fd, file in fds.items():
         log.info('fd={0} file={1}'.format(fd, file))
     dashboard.name_procs[process.name] = process # move to higher level
@@ -99,9 +104,30 @@ def kill_process(process: Process, stopsig=signal.SIGKILL):
         os.kill(process.pid, stopsig)  # get signal from data
         log.debug('killing signal has been sent to {0}'.format(process.pid))
     except OSError:
-        log.error('failed to kill process {0}:[{1}]'.format(process.name, process.pid))
+        log.error('failed to kill process {0}:[{1}]'
+                  .format(process.name, process.pid))
 
 
 def kill_program(program: Program):
     for process in program.processes:
         utils.thread_start(kill_process, (process, program.stopsig))
+
+
+def reload_launch_manager(new_programs: {str: Program}):
+    log.info('starting reload launch manager')
+    old_programs = dashboard.programs
+    nprog_names = list(new_programs.keys())
+    oprog_names = list(old_programs.keys())
+    for oprog_name, oprog in old_programs.items():
+        if oprog_name not in nprog_names:
+            dashboard.prog_to_remove.append(oprog_name)
+        else:
+            nprog = new_programs.get(oprog_name)
+            if nprog.cmd is not oprog.cmd \
+                or nprog.numprocs is not oprog.numprocs\
+                or nprog.argv is not oprog.argv\
+                or nprog.wdir is not oprog.wdir:
+                dashboard.prog_to_remove.append(oprog_name)
+                remove_progs()
+                dashboard.programs[oprog_name] = nprog
+                launch_program(nprog)

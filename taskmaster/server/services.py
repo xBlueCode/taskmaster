@@ -87,7 +87,6 @@ def stop_programs(cs, prog_names):
                     utils.thread_start(kill_process, (process, program.stopsig))
 
 
-
 def serve_relaod(cs, query_list):
     log.info('serving: reload: {0}'.format(query_list))
     if len(query_list) < 2:

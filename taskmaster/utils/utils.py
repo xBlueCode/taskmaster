@@ -19,6 +19,8 @@ def socket_bind(socket: socket.socket, addr) -> bool:
 
 
 def socket_recv(socket: socket.socket) -> str:
+    if socket is None:
+        return ''
     try:
         size = socket.recv(SOCKET_HEAD).decode('utf-8')
         if size.isnumeric():
@@ -34,6 +36,8 @@ def socket_recv(socket: socket.socket) -> str:
 
 
 def socket_send(socket: socket.socket, data: str):
+    if socket is None or data is None:
+        return
     try:
         bytes = data.encode('utf-8')
         if data == '':
